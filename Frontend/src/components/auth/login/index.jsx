@@ -1,138 +1,137 @@
 import React, { useState } from "react";
-import { googleProvider } from "../../../firebase/firebase";
-import { auth } from "../../../firebase/firebase"
-import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from "../../../firebase/auth";
-
+import axios from "axios";
+import { useAuth } from "../../../context/AuthContext";
 
 
 const LoginPage = () => {
-  const [adminId, setAdminId] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [email, setEmail ] = useState('');
-  const [isSigningIn, setIsSigningIn] = useState(false);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState('');
-  
-  const onSubmit = async (e) => {
-    e.preventDefault()
-    if(!isSigningIn) {
-        setIsSigningIn(true)
-        await doSignInWithEmailAndPassword(email, password )
-    }
-  }
+  const { login } = useAuth();
 
-  const onGoogleSignIn = (e) =>{
-    e.preventDefault();
-    if(!isSigningIn) {
-        setIsSigningIn(true);
-        doSignInWithGoogle().catch(err => {
-            setIsSigningIn(false)
-        })
-    }
-  }
+  const [adminId, setAdminId] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [studentPassword, setStudentPassword] = useState("");
 
-  // Admin login handler
-  const handleAdminLogin = (e) => {
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
-    if (adminId === "admin" && adminPassword === "admin123") {
-      alert("Admin login successful!");
-      // Redirect or set admin state here
-    } else {
-      alert("Invalid admin credentials!");
+    try {
+      const res = await axios.post("http://localhost:8000/api/admin/login", {
+        adminId,
+        password,
+      });
+
+      if (res.data.message === "Login successful") {
+        login({ role: "admin", id: adminId }, res.data.token);
+        sessionStorage.setItem("token", res.data.token);
+        navigate("/AdminHome");
+      } else {
+        alert("Invalid Admin ID or Password.");
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      alert("Login failed. Please try again.");
     }
   };
 
-  // Student login handler (Google Sign-In)
-  const handleStudentLogin = async () => {
+  const handleStudentLogin = async (e) => {
+    e.preventDefault();
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      alert(`Student login successful! Welcome, ${user.displayName}`);
-      navigate("/StudentHomePage");
-      // Redirect or set student state here
+      const res = await axios.post("http://localhost:8000/api/student/login", {
+        email,
+        studentPassword: studentPassword,
+      });
+
+      if (res.data.status === "success" && res.data.token) {
+        login({ role: "student", email }, res.data.token);
+        sessionStorage.setItem("token", res.data.token);
+        navigate("/StudentHome");
+      } else {
+        alert("Invalid credentials! Please try again.");
+      }
     } catch (error) {
-      console.error("Error during Google Sign-In:", error);
+      console.error("Student login error:", error);
+      alert("Login failed. Please try again.");
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h1>Login Page</h1>
+    <div className="flex items-center justify-center min-h-screen bg-s from-blue-500 to-purple-600 p-6">
+      <div className="w-full max-w-4xl bg-white p-10 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-700 text-center mb-8 m-10">Welcome Back</h1>
 
-      {/* Admin Login Form */}
-      <div style={styles.formContainer}>
-        <h2>Admin Login</h2>
-        <form onSubmit={handleAdminLogin}>
-          <input
-            type="text"
-            placeholder="Admin ID"
-            value={adminId}
-            onChange={(e) => setAdminId(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={adminPassword}
-            onChange={(e) => setAdminPassword(e.target.value)}
-            style={styles.input}
-          />
-          <button type="submit" style={styles.button}>
-            Admin Login
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Admin Login */}
+          <div className="p-6 bg-gray-100 rounded-lg shadow">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Admin Login</h2>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Admin ID"
+                value={adminId}
+                onChange={(e) => setAdminId(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition"
+              >
+                Login
+              </button>
+            </form>
+          </div>
+
+          {/* Student Login */}
+          <div className="p-6 bg-gray-100 rounded-lg shadow">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Student Login</h2>
+            <form onSubmit={handleStudentLogin} className="space-y-4">
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={studentPassword}
+                onChange={(e) => setStudentPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition"
+              >
+                Login
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Register Button */}
+        <div className="text-center mt-6">
+          <button
+            onClick={() => navigate("/register")}
+            className="mt-4 bg-gray-700 hover:bg-gray-900 text-white font-semibold py-2 px-6 rounded-lg transition"
+          >
+            Register as Student
           </button>
-        </form>
-      </div>
-
-      {/* Student Login (Google Sign-In) */}
-      <div style={styles.formContainer}>
-        <h2>Student Login</h2>
-        <button onClick={handleStudentLogin} style={styles.button}>
-          Sign in with Google
-        </button>
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    width:"100vw",
-    fontFamily: "Arial, sans-serif",
-  },
-  formContainer: {
-    margin: "20px",
-    padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    width: "400px",
-    textAlign: "center",
-    
-    
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "4px",
-    border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    cursor: "pointer",
-  },
 };
 
 export default LoginPage;
