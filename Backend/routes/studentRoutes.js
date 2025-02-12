@@ -7,8 +7,8 @@ import User from "../models/User.js";
 const StudentLoginrouter = express.Router();
 
 StudentLoginrouter.post("/login", async (req, res) => {
-  const { email, studentPassword } = req.body;
-  console.log(" Login Request Received:", { email, studentPassword });
+  const { email, password } = req.body;
+  console.log(" Login Request Received:", { email, password });
 
   try {
 
@@ -19,15 +19,21 @@ StudentLoginrouter.post("/login", async (req, res) => {
     }
 
     //  Ensure password exists in DB
-    if (!student.studentPassword) {
+    if (!student.Password) {
       console.log(" Password Missing in DB");
       return res
         .status(500)
         .json({ message: "Server error: Password missing in DB" });
     }
 
+    if(!student.role === "student"){
+      return res
+        .status(500)
+        .json({ message: "Server error: Admin missing in DB" });
+    }
+
     //  Verify password
-    const isMatch = await bcrypt.compare(studentPassword, student.studentPassword);
+    const isMatch = await bcrypt.compare(password, student.Password);
     console.log("Password Match Result:", isMatch);
 
     if (!isMatch) {
@@ -45,11 +51,19 @@ StudentLoginrouter.post("/login", async (req, res) => {
 
     //  Generate JWT Token
     const token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "300d",
     });
     console.log(" JWT Token Generated");
 
-    res.json({ status: "success", token: token });
+    res.json({ status: "success",
+      token,      //  JWT Token for authentication
+      ID: student._id, //   User ID
+      name: student.name, //   Name
+      role: student.role, // role
+      email: student.email,
+      course: student.course,
+      yearofpass: student.yearofpass // 
+     });
   } catch (error) {
     console.error(" Admin login error:", error);
     res.status(500).json({ message: "Server error" });

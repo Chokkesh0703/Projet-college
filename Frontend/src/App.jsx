@@ -10,6 +10,7 @@ import StudentRoute from "./routes/StudentRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./index.css";
 import AdminPost from "./components/pages/Adminpost";
+import Chatroom from "./components/pages/Chatroom";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
 
       {/* Protected Routes */}
       <Route path="/StudentHome" element={<StudentRoute><StudentHome user={user} /></StudentRoute>} />
+      <Route path="/Chatroom" element={<StudentRoute>< Chatroom /></StudentRoute>} />
       <Route path="/AdminHome" element={<AdminRoute><AdminHome /></AdminRoute>} />
 
       {/* Admin-Only Routes */}

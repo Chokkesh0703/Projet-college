@@ -9,7 +9,7 @@ const LoginPage = () => {
   const { login } = useAuth();
 
   const [adminId, setAdminId] = useState("");
-  const [password, setPassword] = useState("");
+  const [adminPassword, setadminPassword] = useState("");
   const [email, setEmail] = useState("");
   const [studentPassword, setStudentPassword] = useState("");
 
@@ -17,13 +17,16 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:8000/api/admin/login", {
-        adminId,
-        password,
+        email : adminId,
+        password: adminPassword,
       });
 
       if (res.data.message === "Login successful") {
         login({ role: "admin", id: adminId }, res.data.token);
         sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("userId", res.data.ID);
+        sessionStorage.setItem("role", res.data.role);
+        sessionStorage.setItem("user", res.data.name);
         navigate("/AdminHome");
       } else {
         alert("Invalid Admin ID or Password.");
@@ -38,13 +41,18 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:8000/api/student/login", {
-        email,
-        studentPassword: studentPassword,
+        email : email,
+        password: studentPassword,
       });
 
       if (res.data.status === "success" && res.data.token) {
         login({ role: "student", email }, res.data.token);
         sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("userId", res.data.ID);
+        sessionStorage.setItem("role", res.data.role );
+        sessionStorage.setItem("user", res.data.name);
+        sessionStorage.setItem("course",res.data.course);
+        sessionStorage.setItem("yearofpass", res.data.yearofpass);
         navigate("/StudentHome");
       } else {
         alert("Invalid credentials! Please try again.");
@@ -76,8 +84,8 @@ const LoginPage = () => {
               <input
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={adminPassword}
+                onChange={(e) => setadminPassword(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />

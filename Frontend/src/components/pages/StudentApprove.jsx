@@ -70,6 +70,7 @@ const StudentApprove = () => {
                 <h2 className="text-lg font-semibold">{student.name}</h2>
                 <p className="text-gray-600">{student.email}</p>
                 <p className="text-gray-500">Course: {student.course}</p>
+                <h2 className="text-lg font-semibold">Role:{student.role}</h2>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-500">College ID: {student.collegeid}</p>

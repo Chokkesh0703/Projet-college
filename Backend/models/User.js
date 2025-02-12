@@ -9,10 +9,10 @@ const userSchema = new mongoose.Schema({
   yearofpass: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phoneno: { type: String, required: true },
-  studentPassword: { type: String, required: true },
+  Password: { type: String, required: true },
   approve: { type: Boolean, default: false },
-  chatroom:[{type: mongoose.Schema.ObjectId, ref:"Message"}]
-
+  chatroom:[{type: mongoose.Schema.ObjectId, ref:"Message"}],
+  role: { type: String, enum: ["admin", "student"], required :true },
 });
  
 // userSchema.pre("save", async function (next) {

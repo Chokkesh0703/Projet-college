@@ -1,91 +1,199 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { AiFillLike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
+import { FaRegCommentDots } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
+
+
+const API_BASE_URL = "http://localhost:8000"; // Ensure backend is running
 
 const AdminPost = () => {
   const [posts, setPosts] = useState([]);
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [commentText, setCommentText] = useState({});
+  const [showComments, setShowComments] = useState({});
+  const userId = sessionStorage.getItem("userId") || "";
+  const token = sessionStorage.getItem("token");
+  const Role = sessionStorage.getItem("role")
 
-  const API_BASE_URL = "http://localhost:8000"; // Ensure backend is running
+  
 
-  // Fetch posts from API
+  // Fetch all posts
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const {data}  = await axios.get(`${API_BASE_URL}/api/posts/all`);
-      console.log("Fetched Posts:", data);
-
-      if (Array.isArray(data)) {
-        setPosts(data);
-      } else {
-        console.error("Unexpected API response:", data);
-        setPosts([]);
-      }
+      const { data } = await axios.get(`${API_BASE_URL}/api/posts/all`);
+      setPosts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching posts:", error);
-      setPosts([]);
     } finally {
       setLoading(false);
     }
   };
 
-   
   useEffect(() => {
-    fetchPosts(); //  Fetch posts on mount
+    fetchPosts();
   }, []);
 
   // Handle post submission
   const handlePostSubmit = async (e) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("token");// Get token
-    const userId = sessionStorage.getItem("userId"); // Get user ID
+    const token = sessionStorage.getItem("token");
+    if (!token) return alert("Unauthorized! Please log in.");
 
     try {
       const formData = new FormData();
       formData.append("text", text);
       if (file) {
-        formData.append("file", file); //  Append actual file
-        formData.append("mediaType", file.type.startsWith("image") ? "image" : "video"); //  Detect file type
+        formData.append("file", file);
+        formData.append("mediaType", file.type.startsWith("image") ? "image" : "video");
       } else {
         formData.append("mediaType", "none");
       }
-  
-      const response = await axios.post(
-        `${API_BASE_URL}/api/posts/create`,
-        formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, //  Add auth header
-              "X-User-Id": userId, //  Ensure user ID is sent
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-  
-      console.log("Post created:", response.data);
-  
+
+      await axios.post(`${API_BASE_URL}/api/posts/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Role : `${Role}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setText("");
       setFile(null);
       fetchPosts();
     } catch (error) {
       console.error("Error creating post:", error);
-      if (error.response) {
-        console.error("Response Data:", error.response.data);
-      }
+    }
+  };
+
+  // Handle like/unlike post
+  const handleLike = async (postId) => {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+  
+    if (!token || !userId) return alert("Unauthorized! Please log in.");
+  
+    try {
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/posts/like/${postId}`,
+        { userId },
+        { headers: { Authorization: `Bearer ${token}`, } }
+      );
+  
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, likes: post.likes.includes(userId) ? post.likes.filter((id) => id !== userId) : [...post.likes, userId] }
+            : post
+        )
+      );console.log(data);
+    } catch (error) {
+      console.error("Error liking post:", error.response?.data || error.message);
     }
   };
   
 
+  // Handle comment submission
+  const handleCommentSubmit = async (postId ) => {
+    if (!commentText[postId]?.trim()) return alert("Comment cannot be empty");
+  
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+  
+    if (!token || !userId) {
+      return alert("Unauthorized! Please log in.");
+    }
+  
+    try {
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/posts/comment/${postId}`,
+        { userId, text: commentText[postId] },
+        { headers: { Authorization: `Bearer ${token}`, Role : `${Role}`, } }
+      );
+
+      const newComment = {
+        _id: data.commentId, // Assume API returns the new comment's ID
+        user: { _id: userId, }, // Show the commenter's name immediately
+        text: commentText[postId],
+        createdAt: new Date().toISOString(),
+      };
+  
+      // Update posts state directly to reflect the new comment
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: [...post.comments, newComment] }
+            : post
+        )
+      );
+  
+      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Ensure proper state update
+      
+    } catch (error) {
+      console.error("Error adding comment:", error.response?.data || error.message);
+      alert("Failed to add comment. Please try again.");
+    }
+  };
+  
+
+  // Handle delete post
+  const handleDelete = async (postId) => {
+    const token = sessionStorage.getItem("token");
+    const Role = sessionStorage.getItem("role");
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+  
+    if (!token) {
+      console.error("User not authenticated");
+      return;
+    }
+  
+    try {
+      await axios.delete(`http://localhost:8000/api/posts/delete/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      console.log("Post deleted successfully");
+      fetchPosts();
+    } catch (error) {
+      console.error("Error deleting post:", error.response?.data || error.message);
+    }
+  };
+  
+   // Handle delete comment with confirmation
+   const handleDeleteComment = async (postId, commentId) => {
+    const userId = sessionStorage.getItem("userId");
+    const Role = sessionStorage.getItem("role");
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
+    try {
+      await axios.delete(`${API_BASE_URL}/api/posts/comment/${postId}/${commentId}`, {
+        data: { userId, Role }, //  Move data outside headers
+        headers: { Authorization: `Bearer ${token}` }, //  Only token in headers
+      });
+      // Update posts state directly to remove the comment
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+          : post
+      )
+    );
+
+      console.log("Comment deleted successfully");
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Admin Posts</h2>
+    <div className="container mx-auto p-4 max-w-3xl">
+      <h2 className="text-2xl font-bold mb-4 text-center">Admin Posts</h2>
 
       {/* Post Upload Form */}
-      <form
-        onSubmit={handlePostSubmit}
-        className="bg-gray-100 p-4 rounded-lg shadow-lg"
-      >
+      <form onSubmit={handlePostSubmit} className="bg-gray-100 p-4 rounded-lg shadow-lg">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -93,52 +201,69 @@ const AdminPost = () => {
           placeholder="Write something..."
           required
         />
-        <input
-          type="file"
-          accept="image/*, video/*"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="my-2 block w-full"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
+        <input type="file" accept="image/*, video/*" onChange={(e) => setFile(e.target.files[0])} className="my-2 block w-full" />
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
           Post
         </button>
       </form>
 
       {/* Display Posts */}
-      <div className="mt-4">
+      <div className="mt-6 space-y-4">
         {loading ? (
           <p className="text-center text-gray-500">Loading posts...</p>
         ) : posts.length === 0 ? (
           <p className="text-center text-gray-500">No posts available.</p>
         ) : (
-          posts.map((posts) => (
-            <div
-              key={posts._id}
-              className="bg-white p-4 rounded-lg shadow-lg mb-4"
-            >
-              <p className="mb-2">{posts.text}</p>
+          posts.map((post) => (
+            <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
+              <p className="mb-2">{post.text}</p>
 
-              {/* Handle Media Display */}
-              {posts.mediaUrl && (
-                <>
-                  {posts.mediaType === "image" && (
-                    <img
-                      src={`http://localhost:8000/uploads/${posts.mediaUrl}`}
-                      alt="Post"
-                      className="w-full rounded-lg"
-                    />
+              {/* Display Media */}
+              {post.mediaUrl && (
+                <div className="mt-2">
+                  {post.mediaType === "image" ? (
+                    <img src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} alt="Post" className="w-full rounded-lg" />
+                  ) : (
+                    <video src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} controls className="w-full rounded-lg" />
                   )}
-                  {posts.mediaType === "video" && (
-                    <video
-                      src={`http://localhost:8000/uploads/${posts.mediaUrl}`}
-                      controls
-                      className="w-full rounded-lg"
-                    />
-                  )}
-                </>
+                </div>
+              )}
+
+              {/* Like & Comment Actions */}
+              <div className="flex items-center justify-between mt-4">
+                <button onClick={() => handleLike(post._id)} className="flex items-center space-x-2">
+                  {post.likes.includes(userId) ? <AiFillLike className="text-red-500" size={20} /> : <AiOutlineLike className="text-gray-600" size={20} />}
+                  <span>{post.likes.length}</span>
+                </button>
+
+                <button onClick={() => setShowComments({ ...showComments, [post._id]: !showComments[post._id] })} className="flex items-center space-x-2">
+                  <FaRegCommentDots className="text-gray-600" size={20} />
+                  <span>{post.comments.length}</span>
+                </button>
+
+                <button onClick={() => handleDelete(post._id)}>
+                  <AiOutlineDelete className="text-red-500" size={20} />
+                </button>
+              </div>
+
+              {/* Comment Section */}
+              {showComments[post._id] && (
+                <div className="mt-4 p-2 bg-gray-100 rounded">
+                  {post.comments.map((comment) => (
+                    <div key={comment._id} className="flex justify-between items-center p-2">
+                      <p>
+                        <strong>{comment.user?.name || "Anonymous"}:</strong> {comment.text}
+                      </p>
+                      <button onClick={() =>{ console.log(comment._id); handleDeleteComment(post._id, comment._id)}}>
+                        <MdCancel className="text-red-500" />
+                      </button>
+                    </div>
+                  ))}
+                  <input type="text" value={commentText[post._id] || ""} onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })} className="w-full mt-2 p-2 border rounded" />
+                  <button onClick={() => handleCommentSubmit(post._id)} className="bg-green-500 text-white px-3 py-1 rounded mt-2">
+                    Add Comment
+                  </button>
+                </div>
               )}
             </div>
           ))

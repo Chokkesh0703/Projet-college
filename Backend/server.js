@@ -1,6 +1,5 @@
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -14,16 +13,15 @@ import postsRoutes from "./routes/adminPosts.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path"
+import setupSocket from "./routes/socket.js";
+import { chatroomRouter  } from "./routes/chatroom.js";
+import Chatroom from "./models/Message.js";
 
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
+const io = setupSocket(server);
+
 app.use(bodyParser.json());
 
 const fileName = fileURLToPath(import.meta.url);
@@ -49,6 +47,7 @@ mongoose
 app.use("/api/admin", adminRouter);
 app.use("/api/student", studentRouter);
 app.use("/api", approverouter);
+app.use("/api/chatroom", chatroomRouter);
 
 // Test Route
 app.get("/", (req, res) => {
@@ -57,14 +56,17 @@ app.get("/", (req, res) => {
 
 // Register User
 app.post("/register", async (req, res) => {
-  const { name, course, collegeid, unid, yearofpass, email, phoneno, studentPassword } = req.body;
+  const { name, course, collegeid, unid, yearofpass, email, phoneno, Password, role } = req.body;
   try {
     const check = await User.findOne({ email });
     if (check) {
       return res.json("exist");
     }
+    if (!["admin", "student"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role" });
+    }
 
-    const hashedPassword = await bcrypt.hash(studentPassword, 10);
+    const hashedPassword = await bcrypt.hash(Password, 10);
     const newUser = new User({
       name,
       course,
@@ -73,8 +75,9 @@ app.post("/register", async (req, res) => {
       yearofpass,
       email,
       phoneno,
-      studentPassword: hashedPassword,
+      Password: hashedPassword,
       approve: false,
+      role,
     });
 
     await newUser.save();
@@ -98,7 +101,7 @@ app.get("/collection", async (req, res) => {
 import Post from "./models/Post.js" 
 
 //  Export Correctly
-export { app, server, io,  }; // Named Export
+export { app,  io,  }; // Named Export
 
 app.use("/api/posts", postsRoutes);
 
@@ -124,6 +127,29 @@ io.on("connection", (socket) => {
   });
 });
 
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("sendMessage", async (newMessage) => {
+    try {
+      const { sender, text, course, yearofpass } = newMessage;
+
+      let chatroom = await Chatroom.findOne({ course, yearofpass });
+      if (!chatroom) chatroom = new Chatroom({ course, yearofpass, messages: [] });
+
+      chatroom.messages.push({ sender, text });
+      await chatroom.save();
+
+      io.emit("receiveMessage", { sender, text });
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
 // Start Server
 const PORT = 8000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -1,107 +1,252 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { FaRegCommentDots } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
+import { BsFilterCircle } from "react-icons/bs";
 import { io } from "socket.io-client";
-import { MessageCircle, ThumbsUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const socket = io("http://localhost:8000");
+const API_BASE_URL = "http://localhost:8000";
+const socket = io(API_BASE_URL);
 
-export default function StudentHome({ user }) {
+const StudentHome = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  const [comment, setComment] = useState({});
+  const [commentText, setCommentText] = useState({});
+  const [showComments, setShowComments] = useState({});
+
+  const userId = sessionStorage.getItem("userId") || "";
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    if (!user) return;
-
-    socket.on("newPost", (post) => {
-      setPosts((prevPosts) => {
-        const updatedPosts = [post, ...prevPosts];
-        return updatedPosts.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-      });
-    });
-
-    socket.on("updatePostLikes", ({ postId, likes }) => {
+    fetchPosts();
+    socket.on("postUpdated", (updatedPost) => {
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post._id === postId ? { ...post, likes } : post
+          post._id === updatedPost._id ? updatedPost : post
         )
       );
     });
 
-    socket.on("updatePostComments", ({ postId, comments }) => {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId ? { ...post, comments } : post
-        )
-      );
-      setComment((prev) => ({ ...prev, [postId]: "" }));
-    });
+    return () => socket.off("postUpdated");
+  }, []);
 
-    return () => {
-      socket.off("newPost");
-      socket.off("updatePostLikes");
-      socket.off("updatePostComments");
-    };
-  }, [user]);
-
-  const likePost = (postId) => {
-    socket.emit("likePost", { postId, userId: user._id });
+  const fetchPosts = async () => {
+    try {
+      const { data } = await axios.get(`${API_BASE_URL}/api/posts/all`);
+      setPosts(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
-  const commentOnPost = (postId) => {
-    if (!comment[postId]?.trim()) return;
+  // Handle like/unlike post
+  const handleLike = async (postId) => {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
 
-    socket.emit("addComment", {
-      postId,
-      userId: user._id,
-      text: comment[postId],
-    });
+    if (!token || !userId) return alert("Unauthorized! Please log in.");
+
+    try {
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/posts/like/${postId}`,
+        { userId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: post.likes.includes(userId)
+                  ? post.likes.filter((id) => id !== userId)
+                  : [...post.likes, userId],
+              }
+            : post
+        )
+      );
+      console.log(data);
+    } catch (error) {
+      console.error(
+        "Error liking post:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleCommentSubmit = async (postId) => {
+    if (!commentText[postId]?.trim()) return alert("Comment cannot be empty");
+
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+
+    if (!token || !userId) {
+      return alert("Unauthorized! Please log in.");
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/posts/comment/${postId}`,
+        { userId, text: commentText[postId] },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Ensure proper state update
+    } catch (error) {
+      console.error(
+        "Error adding comment:",
+        error.response?.data || error.message
+      );
+      alert("Failed to add comment. Please try again.");
+    }
+  };
+  // delete comment
+  const handleDeleteComment = async (postId, commentId) => {
+    const userId = sessionStorage.getItem("userId");
+    const Role = sessionStorage.getItem("role");
+    if (!window.confirm("Are you sure you want to delete this comment?"))
+      return;
+
+    try {
+      await axios.delete(
+        `${API_BASE_URL}/api/posts/comment/${postId}/${commentId}`,
+        {
+          data: { userId, Role }, //  Move data outside headers
+          headers: { Authorization: `Bearer ${token}` }, //  Only token in headers
+        }
+      );
+      // Update posts state directly to remove the comment
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                comments: post.comments.filter(
+                  (comment) => comment._id !== commentId
+                ),
+              }
+            : post
+        )
+      );
+
+      console.log("Comment deleted successfully");
+    } catch (error) {
+      alert("Can not delete")
+      console.error("Error deleting comment:", error);
+    }
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">📢 Admin Posts</h2>
+    <div className="container mx-auto p-4 max-w-3xl">
+      <h2 className="text-2xl font-bold mb-4 text-center">Student Home</h2>
+      <div className="fixed bottom-5 right-5 bg-blue-500 p-4 rounded-full shadow-lg cursor-pointer">
+        <BsFilterCircle
+          size={30}
+          className="text-white"
+          onClick={() => navigate("/Chatroom")}
+        />
+      </div>
+      <div className="mt-6 space-y-4">
         {posts.length === 0 ? (
-          <p className="text-center text-gray-500">No posts available</p>
+          <p className="text-center text-gray-500">No posts available.</p>
         ) : (
           posts.map((post) => (
-            <div key={post._id} className="border p-4 rounded-md mb-4">
-              <p>{post.content}</p>
-              <div className="flex items-center gap-3 mt-2">
-                <button
-                  onClick={() => likePost(post._id)}
-                  className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-200"
-                >
-                  <ThumbsUp size={16} className="mr-1" /> {post.likes}
-                </button>
-                <div className="flex items-center text-gray-600">
-                  <MessageCircle size={16} className="mr-1" /> {post.comments.length} Comments
+            <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
+              <p className="mb-2">{post.text}</p>
+
+              {/* Display Media */}
+              {post.mediaUrl && (
+                <div className="mt-2">
+                  {post.mediaType === "image" ? (
+                    <img
+                      src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                      alt="Post"
+                      className="w-full rounded-lg"
+                    />
+                  ) : (
+                    <video
+                      src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                      controls
+                      className="w-full rounded-lg"
+                    />
+                  )}
                 </div>
+              )}
+              {/* Like & Comment Actions */}
+              <div className="flex items-center justify-between mt-4">
+                <button
+                  onClick={() => handleLike(post._id)}
+                  className="flex items-center space-x-2"
+                >
+                  {post.likes.includes(userId) ? (
+                    <AiFillLike className="text-red-500" size={20} />
+                  ) : (
+                    <AiOutlineLike className="text-gray-600" size={20} />
+                  )}
+                  <span>{post.likes.length}</span>
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowComments({
+                      ...showComments,
+                      [post._id]: !showComments[post._id],
+                    })
+                  }
+                  className="flex items-center space-x-2"
+                >
+                  <FaRegCommentDots className="text-gray-600" size={20} />
+                  <span>{post.comments.length}</span>
+                </button>
               </div>
-              <div className="mt-2">
-                {post.comments.map((c, index) => (
-                  <p key={index} className="text-sm border-b p-1">{c.text}</p>
-                ))}
-                <div className="flex gap-2 mt-2">
+
+              {/* Comment Section */}
+              {showComments[post._id] && (
+                <div className="mt-4 p-2 bg-gray-100 rounded">
+                  {post.comments.map((comment) => (
+                    <div
+                      key={comment._id}
+                      className="flex justify-between items-center p-2"
+                    >
+                      <p>
+                        <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
+                        {comment.text}
+                      </p>
+                      <button
+                        onClick={() =>
+                          handleDeleteComment(post._id, comment._id)
+                        }
+                      >
+                        <MdCancel className="text-red-500" />
+                      </button>
+                    </div>
+                  ))}
                   <input
-                    value={comment[post._id] || ""}
-                    onChange={(e) => setComment({ ...comment, [post._id]: e.target.value })}
-                    placeholder="Add a comment..."
-                    className="flex-1 p-2 border rounded-md"
+                    type="text"
+                    value={commentText[post._id] || ""}
+                    onChange={(e) =>
+                      setCommentText({
+                        ...commentText,
+                        [post._id]: e.target.value,
+                      })
+                    }
+                    className="w-full mt-2 p-2 border rounded"
                   />
                   <button
-                    onClick={() => commentOnPost(post._id)}
-                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200"
+                    onClick={() => handleCommentSubmit(post._id)}
+                    className="bg-green-500 text-white px-3 py-1 rounded mt-2"
                   >
-                    Post
+                    Add Comment
                   </button>
                 </div>
-              </div>
+              )}
             </div>
           ))
         )}
       </div>
     </div>
   );
-}
+};
+
+export default StudentHome;

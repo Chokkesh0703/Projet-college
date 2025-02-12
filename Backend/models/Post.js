@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import multer from "multer"
+
 
 
 const PostSchema = new mongoose.Schema(
@@ -7,7 +7,7 @@ const PostSchema = new mongoose.Schema(
     text: { type: String, required: true },
     mediaUrl: { type: String }, // Stores filename (MongoDB GridFS)
     mediaType: { type: String, enum: ["image", "video", "none"], default: "none" },
-    likes: { type: Number, default: 0 },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comments: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", },
   },
   { timestamps: true }
 );
