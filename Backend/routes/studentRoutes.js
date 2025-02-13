@@ -26,7 +26,14 @@ StudentLoginrouter.post("/login", async (req, res) => {
         .json({ message: "Server error: Password missing in DB" });
     }
 
-    if(!student.role === "student"){
+    if(student.approve != true){
+      console.log("Not Approved")
+      return res
+        .status(500)
+        .json({ message: "student not approved" });
+    }
+
+    if(student.role != "student"){
       return res
         .status(500)
         .json({ message: "Server error: Admin missing in DB" });
