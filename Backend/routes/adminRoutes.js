@@ -22,11 +22,18 @@ router.post("/login", async (req, res) => {
       return res.status(500).json({ message: "Server error: Password missing in DB" });
     }
         
-  
-    if(!admin.role === "admin"){
+    if(admin.role != "admin"){
+      console.log("Not an admin")
       return res
         .status(500)
         .json({ message: "Server error: Admin missing in DB" });
+    }
+
+    if(admin.approve != true){
+      console.log("Not Approved")
+      return res
+        .status(500)
+        .json({ message: "Admin not approved" });
     }
 
     //  Verify password
