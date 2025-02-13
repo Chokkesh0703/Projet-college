@@ -3,9 +3,11 @@ import axios from "axios";
 import { AiFillLike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import { io } from "socket.io-client";
 
 
-const API_BASE_URL = "http://localhost:8000"; // Ensure backend is running
+const API_BASE_URL = "http://localhost:8000"  // Ensure backend is running
+const socket = io(API_BASE_URL);
 
 const AdminPost = () => {
   const [posts, setPosts] = useState([]);
@@ -18,7 +20,18 @@ const AdminPost = () => {
   const token = sessionStorage.getItem("token");
   const Role = sessionStorage.getItem("role")
 
+  useEffect(() => {
+      fetchPosts();
+      socket.on("postUpdated", (updatedPost) => {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === updatedPost._id ? updatedPost : post
+          )
+        );
+      });
   
+      return () => socket.off("postUpdated");
+    }, []);
 
   // Fetch all posts
   const fetchPosts = async () => {
@@ -33,9 +46,7 @@ const AdminPost = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  
 
   // Handle post submission
   const handlePostSubmit = async (e) => {

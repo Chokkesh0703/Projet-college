@@ -14,8 +14,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path"
 import setupSocket from "./routes/socket.js";
-import { chatroomRouter  } from "./routes/chatroom.js";
-import Chatroom from "./models/Message.js";
+import setupChatroomRoutes from "./routes/chatroom.js";
+
 
 dotenv.config();
 const app = express();
@@ -47,7 +47,6 @@ mongoose
 app.use("/api/admin", adminRouter);
 app.use("/api/student", studentRouter);
 app.use("/api", approverouter);
-app.use("/api/chatroom", chatroomRouter);
 
 // Test Route
 app.get("/", (req, res) => {
@@ -127,29 +126,28 @@ io.on("connection", (socket) => {
   });
 });
 
+
+//  Attach Socket.io instance to routes
+const chatroomRouter = setupChatroomRoutes(io);
+app.use("/api/chatroom", chatroomRouter);
+
+//  Handle Socket.io connections
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  console.log("A user connected:", socket.id);
 
-  socket.on("sendMessage", async (newMessage) => {
-    try {
-      const { sender, text, course, yearofpass } = newMessage;
-
-      let chatroom = await Chatroom.findOne({ course, yearofpass });
-      if (!chatroom) chatroom = new Chatroom({ course, yearofpass, messages: [] });
-
-      chatroom.messages.push({ sender, text });
-      await chatroom.save();
-
-      io.emit("receiveMessage", { sender, text });
-    } catch (error) {
-      console.error("Error saving message:", error);
-    }
+  // Join chatroom based on course and year
+  socket.on("joinRoom", ({ course, yearofpass }) => {
+    const room = `${course}-${yearofpass}`;
+    socket.join(room);
+    console.log(`User ${socket.id} joined room: ${room}`);
   });
 
+  // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
+
 // Start Server
 const PORT = 8000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

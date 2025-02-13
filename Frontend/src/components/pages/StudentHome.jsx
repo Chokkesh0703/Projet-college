@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { FaRegCommentDots } from "react-icons/fa";
+import { FaRegCommentDots, FaSignOutAlt } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { BsFilterCircle } from "react-icons/bs";
 import { io } from "socket.io-client";
@@ -132,7 +132,7 @@ const StudentHome = () => {
 
       console.log("Comment deleted successfully");
     } catch (error) {
-      alert("Can not delete")
+      alert("Can not delete");
       console.error("Error deleting comment:", error);
     }
   };
@@ -140,6 +140,12 @@ const StudentHome = () => {
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <h2 className="text-2xl font-bold mb-4 text-center">Student Home</h2>
+      <button
+        onClick={() => navigate("/")}
+        className="mb-4 bg-blue-500 text-white py-2 px-4 rounded"
+      >
+        <FaSignOutAlt className="text-4xl mb-2" /> Logout
+      </button>
       <div className="fixed bottom-5 right-5 bg-blue-500 p-4 rounded-full shadow-lg cursor-pointer">
         <BsFilterCircle
           size={30}

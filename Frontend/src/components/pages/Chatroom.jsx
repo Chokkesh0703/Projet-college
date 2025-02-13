@@ -5,77 +5,65 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8000";
 
-const Chatroom = ({ userId, course, yearofpass }) => {
+const Chatroom = () => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
   const navigate = useNavigate();
   const [socket, setSocket] = useState(null);
-  // let course = sessionStorage.getItem("course");
-  // let yearofpass = sessionStorage.getItem("yearofpass");
+
+  const course = sessionStorage.getItem("course");
+  const yearofpass = sessionStorage.getItem("yearofpass");
+  const userId = sessionStorage.getItem("userId");
 
   useEffect(() => {
+    if (!course || !yearofpass || !userId) {
+      console.warn("Missing session data");
+      return;
+    }
+
     const newSocket = io(API_BASE_URL);
     setSocket(newSocket);
 
-    // Listen for new messages
+    // Join chatroom
+    newSocket.emit("joinRoom", { course, yearofpass });
+
+    // Listen for incoming messages
     newSocket.on("receiveMessage", (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    return () => newSocket.disconnect(); // Clean up on unmount
-  }, []);
+    return () => newSocket.disconnect(); // Cleanup on unmount
+  }, [course, yearofpass, userId]);
 
   useEffect(() => {
     fetchMessages();
   }, [course, yearofpass]);
 
   const fetchMessages = async () => {
-    const course = sessionStorage.getItem("course");
-    const yearofpass = sessionStorage.getItem("yearofpass");
+    if (!course || !yearofpass) return;
 
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/api/chatroom/${course}/${yearofpass}`
-      );
+      const response = await axios.get(`${API_BASE_URL}/api/chatroom/${course}/${yearofpass}`);
 
       if (response.status === 200) {
         setMessages(response.data.messages);
       }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.warn("No chatroom found, initializing empty messages.");
-        setMessages([]); // No messages, handle gracefully
-      } else {
-        console.error("Error fetching messages:", error);
-      }
+      console.error("Error fetching messages:", error);
     }
   };
 
   const sendMessage = async () => {
-    const course = sessionStorage.getItem("course");
-    const yearofpass = sessionStorage.getItem("yearofpass");
-    const userId = sessionStorage.getItem("userId")
-
     if (!messageText.trim() || !course || !yearofpass) return;
 
-    const newMessage = { sender: userId, text: messageText };
-
     try {
-      // Send message to server first
-      const response = await axios.post(`${API_BASE_URL}/api/chatroom/${course}/${yearofpass}/message`, {
-        sender: userId,
-        text: messageText
-      });
-      
+      const response = await axios.post(
+        `${API_BASE_URL}/api/chatroom/${course}/${yearofpass}/message`,
+        { sender: userId, text: messageText }
+      );
 
       if (response.status === 201) {
-        const savedMessage = response.data.newMessage;
-
-        // Only emit message via socket after the server confirms storage
-        socket.emit("sendMessage", savedMessage);
-
-        // Clear input field
-        setMessageText("");
+        setMessageText(""); // Clear input field
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -86,12 +74,8 @@ const Chatroom = ({ userId, course, yearofpass }) => {
     <div className="flex flex-col h-screen bg-gray-100">
       {/* Header */}
       <div className="p-4 bg-blue-600 text-white text-lg flex justify-between items-center">
-        <button onClick={() => navigate("/StudentHome")} className="text-white">
-          ← Back
-        </button>
-        <h1 className="text-xl font-semibold">
-          Chatroom: {"course: `${course}`"} ({yearofpass})
-        </h1>
+        <button onClick={() => navigate("/StudentHome")} className="text-white">← Back</button>
+        <h1 className="text-xl font-semibold">Chatroom: {course}, {yearofpass}</h1>
       </div>
 
       {/* Messages Container */}
@@ -103,9 +87,7 @@ const Chatroom = ({ userId, course, yearofpass }) => {
             <div
               key={index}
               className={`p-2 rounded-lg max-w-xs ${
-                msg.sender === userId
-                  ? "bg-blue-500 text-white self-end ml-auto"
-                  : "bg-gray-200 text-black"
+                msg.sender === userId ? "bg-blue-500 text-white self-end ml-auto" : "bg-gray-200 text-black"
               }`}
             >
               <p className="text-sm font-semibold">
