@@ -19,7 +19,7 @@ const Contact = () => {
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-semibold text-gray-800">Chokkesh</h3>
               <p className="text-gray-700 leading-relaxed">Chokkesh is currently pursuing his final year of BCA. He is passionate about web development and creating meaningful digital experiences.</p>
-              <p className="text-gray-700 leading-relaxed mt-2">Portfolio: <a href="#" className="text-blue-500">[Link to Chokkesh&apos;s Portfolio]</a></p>
+              <p className="text-gray-700 leading-relaxed mt-2">Portfolio: <a href="https://protfolio-chokkesh0703s-projects.vercel.app/" className="text-blue-500">[Link to Chokkesh&apos;s Portfolio]</a></p>
             </div>
             <div className="">
               <h3 className="text-xl font-semibold text-gray-800">Saad Muyeez</h3>

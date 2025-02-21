@@ -141,12 +141,12 @@ const StudentHome = () => {
   };
 
   return (
-    <div className="" style={{
+    <div className="relative" style={{
       backgroundImage: `url(${bgForChat})`,
-      backdropFilter: 'blur(30px)', 
+      backdropFilter: 'blur(30px)',
     }}>
       <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
+        <div className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
           border: '2px solid #ffc13b'
         }}>
           <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
@@ -166,13 +166,7 @@ const StudentHome = () => {
             </button>
           </div>
         </div>
-        <div className="fixed bottom-5 right-5 bg-blue-500 p-4 rounded-full shadow-lg cursor-pointer">
-          <BsFilterCircle
-            size={30}
-            className="text-white"
-            onClick={() => navigate("/Chatroom")}
-          />
-        </div>
+
 
         <div className="mt-6 space-y-4">
           {posts.length === 0 ? (
@@ -181,7 +175,7 @@ const StudentHome = () => {
             posts.map((post) => (
               <div key={post._id} className="p-4 rounded-lg shadow-lg" style={{
                 backgroundColor: 'white',
-                border:'2px solid #ffc13b',
+                border: '2px solid #ffc13b',
               }}>
                 <p className="mb-2">{post.text}</p>
 
@@ -276,7 +270,13 @@ const StudentHome = () => {
           )}
         </div>
       </div>
-
+      <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
+        <BsFilterCircle
+          size={30}
+          className="text-white"
+          onClick={() => navigate("/Chatroom")}
+        />
+      </div>
     </div >
   );
 };

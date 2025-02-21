@@ -205,7 +205,7 @@ const AdminPost = () => {
   return (
     <div className="" style={{
       backgroundImage: `url(${BgStudent3})`,
-      backdropFilter: `blur(40px)`,
+      backdropFilter: 'blur(40px)'
     }}>
       <Header />
       <div className="container mx-auto p-4 max-w-3xl">
