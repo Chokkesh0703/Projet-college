@@ -71,10 +71,14 @@ const Chatroom = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen" style={{
+      backgroundColor: "#f5f0e1",
+    }}>
       {/* Header */}
-      <div className="p-4 bg-blue-600 text-white text-lg flex justify-between items-center">
-        <button onClick={() => navigate("/StudentHome")} className="text-white">← Back</button>
+      <div className="p-4 text-black text-lg flex justify-between items-center" style={{
+        backgroundColor: '#ffc13b',
+      }}>
+        <button onClick={() => navigate("/StudentHome")} className="text-black font-bold">← Back</button>
         <h1 className="text-xl font-semibold">Chatroom: {course}, {yearofpass}</h1>
       </div>
 
@@ -86,9 +90,8 @@ const Chatroom = () => {
           messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-2 rounded-lg max-w-xs ${
-                msg.sender === userId ? "bg-blue-500 text-white self-end ml-auto" : "bg-gray-200 text-black"
-              }`}
+              className={`p-2 rounded-lg max-w-xs ${msg.sender === userId ? "bg-blue-500 text-white self-end ml-auto" : "bg-gray-200 text-black"
+                }`}
             >
               <p className="text-sm font-semibold">
                 {msg.sender === userId ? "You" : msg.sender.name}
@@ -110,7 +113,10 @@ const Chatroom = () => {
         />
         <button
           onClick={sendMessage}
-          className="ml-2 bg-blue-600 text-white p-2 rounded-lg"
+          className="ml-2 text-black font-bold p-2 rounded-lg"
+          style={{
+            backgroundColor: '#ffc13b',
+          }}
         >
           Send
         </button>

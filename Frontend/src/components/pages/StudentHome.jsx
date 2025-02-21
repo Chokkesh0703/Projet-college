@@ -6,6 +6,9 @@ import { MdCancel } from "react-icons/md";
 import { BsFilterCircle } from "react-icons/bs";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+// import BgStudent3 from '../../assets/ChatDoodle3.png'
+// import AdminScenary from '../../assets/AdminScenary.png'
+import bgForChat from '../../assets/ChatDoodle3.png'
 
 const API_BASE_URL = "http://localhost:8000";
 const socket = io(API_BASE_URL);
@@ -59,11 +62,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-                ...post,
-                likes: post.likes.includes(userId)
-                  ? post.likes.filter((id) => id !== userId)
-                  : [...post.likes, userId],
-              }
+              ...post,
+              likes: post.likes.includes(userId)
+                ? post.likes.filter((id) => id !== userId)
+                : [...post.likes, userId],
+            }
             : post
         )
       );
@@ -121,11 +124,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-                ...post,
-                comments: post.comments.filter(
-                  (comment) => comment._id !== commentId
-                ),
-              }
+              ...post,
+              comments: post.comments.filter(
+                (comment) => comment._id !== commentId
+              ),
+            }
             : post
         )
       );
@@ -138,120 +141,143 @@ const StudentHome = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
-      <h2 className="text-2xl font-bold mb-4 text-center">Student Home</h2>
-      <button
-        onClick={() => navigate("/")}
-        className="mb-4 bg-blue-500 text-white py-2 px-4 rounded"
-      >
-        <FaSignOutAlt className="text-4xl mb-2" /> Logout
-      </button>
-      <div className="fixed bottom-5 right-5 bg-blue-500 p-4 rounded-full shadow-lg cursor-pointer">
-        <BsFilterCircle
-          size={30}
-          className="text-white"
-          onClick={() => navigate("/Chatroom")}
-        />
-      </div>
-      <div className="mt-6 space-y-4">
-        {posts.length === 0 ? (
-          <p className="text-center text-gray-500">No posts available.</p>
-        ) : (
-          posts.map((post) => (
-            <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
-              <p className="mb-2">{post.text}</p>
+    <div className="" style={{
+      backgroundImage: `url(${bgForChat})`,
+      backdropFilter: 'blur(30px)', 
+    }}>
+      <div className="container mx-auto p-4 max-w-3xl">
+        <div className="flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
+          border: '2px solid #ffc13b'
+        }}>
+          <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
+            Student Home
+          </h2>
+          <div className="flex justify-center items-center gap-3">
+            <h2 className="font-bold text-2xl">Logout</h2>
+            <button
+              onClick={() => navigate("/")}
+              className="p-3 rounded-full mr-3"
+              style={{
+                backgroundColor: '#ffc13b',
 
-              {/* Display Media */}
-              {post.mediaUrl && (
-                <div className="mt-2">
-                  {post.mediaType === "image" ? (
-                    <img
-                      src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
-                      alt="Post"
-                      className="w-full rounded-lg"
-                    />
-                  ) : (
-                    <video
-                      src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
-                      controls
-                      className="w-full rounded-lg"
-                    />
-                  )}
-                </div>
-              )}
-              {/* Like & Comment Actions */}
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => handleLike(post._id)}
-                  className="flex items-center space-x-2"
-                >
-                  {post.likes.includes(userId) ? (
-                    <AiFillLike className="text-red-500" size={20} />
-                  ) : (
-                    <AiOutlineLike className="text-gray-600" size={20} />
-                  )}
-                  <span>{post.likes.length}</span>
-                </button>
+              }}
+            >
+              <FaSignOutAlt className="text-2xl" />
+            </button>
+          </div>
+        </div>
+        <div className="fixed bottom-5 right-5 bg-blue-500 p-4 rounded-full shadow-lg cursor-pointer">
+          <BsFilterCircle
+            size={30}
+            className="text-white"
+            onClick={() => navigate("/Chatroom")}
+          />
+        </div>
 
-                <button
-                  onClick={() =>
-                    setShowComments({
-                      ...showComments,
-                      [post._id]: !showComments[post._id],
-                    })
-                  }
-                  className="flex items-center space-x-2"
-                >
-                  <FaRegCommentDots className="text-gray-600" size={20} />
-                  <span>{post.comments.length}</span>
-                </button>
-              </div>
+        <div className="mt-6 space-y-4">
+          {posts.length === 0 ? (
+            <p className="text-center text-gray-500">No posts available.</p>
+          ) : (
+            posts.map((post) => (
+              <div key={post._id} className="p-4 rounded-lg shadow-lg" style={{
+                backgroundColor: 'white',
+                border:'2px solid #ffc13b',
+              }}>
+                <p className="mb-2">{post.text}</p>
 
-              {/* Comment Section */}
-              {showComments[post._id] && (
-                <div className="mt-4 p-2 bg-gray-100 rounded">
-                  {post.comments.map((comment) => (
-                    <div
-                      key={comment._id}
-                      className="flex justify-between items-center p-2"
-                    >
-                      <p>
-                        <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
-                        {comment.text}
-                      </p>
-                      <button
-                        onClick={() =>
-                          handleDeleteComment(post._id, comment._id)
-                        }
-                      >
-                        <MdCancel className="text-red-500" />
-                      </button>
-                    </div>
-                  ))}
-                  <input
-                    type="text"
-                    value={commentText[post._id] || ""}
-                    onChange={(e) =>
-                      setCommentText({
-                        ...commentText,
-                        [post._id]: e.target.value,
+                {/* Display Media */}
+                {post.mediaUrl && (
+                  <div className="mt-2">
+                    {post.mediaType === "image" ? (
+                      <img
+                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                        alt="Post"
+                        className="w-full rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                        controls
+                        className="w-full rounded-lg"
+                      />
+                    )}
+                  </div>
+                )}
+                {/* Like & Comment Actions */}
+                <div className="flex items-center justify-between mt-4">
+                  <button
+                    onClick={() => handleLike(post._id)}
+                    className="flex items-center space-x-2"
+                  >
+                    {post.likes.includes(userId) ? (
+                      <AiFillLike className="text-red-500" size={20} />
+                    ) : (
+                      <AiOutlineLike className="text-gray-600" size={20} />
+                    )}
+                    <span>{post.likes.length}</span>
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setShowComments({
+                        ...showComments,
+                        [post._id]: !showComments[post._id],
                       })
                     }
-                    className="w-full mt-2 p-2 border rounded"
-                  />
-                  <button
-                    onClick={() => handleCommentSubmit(post._id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded mt-2"
+                    className="flex items-center space-x-2"
                   >
-                    Add Comment
+                    <FaRegCommentDots className="text-gray-600" size={20} />
+                    <span>{post.comments.length}</span>
                   </button>
                 </div>
-              )}
-            </div>
-          ))
-        )}
+
+                {/* Comment Section */}
+                {showComments[post._id] && (
+                  <div className="mt-4 p-2 bg-gray-100 rounded">
+                    {post.comments.map((comment) => (
+                      <div
+                        key={comment._id}
+                        className="flex justify-between items-center p-2"
+                      >
+                        <p>
+                          <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
+                          {comment.text}
+                        </p>
+                        <button
+                          onClick={() =>
+                            handleDeleteComment(post._id, comment._id)
+                          }
+                        >
+                          <MdCancel className="text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                    <input
+                      type="text"
+                      value={commentText[post._id] || ""}
+                      onChange={(e) =>
+                        setCommentText({
+                          ...commentText,
+                          [post._id]: e.target.value,
+                        })
+                      }
+                      className="w-full mt-2 p-2 border rounded"
+                    />
+                    <button
+                      onClick={() => handleCommentSubmit(post._id)}
+                      className="bg-green-500 text-white px-3 py-1 rounded mt-2"
+                    >
+                      Add Comment
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+
+    </div >
   );
 };
 

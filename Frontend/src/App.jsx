@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/auth/login/index";
 import StudentHome from "./components/pages/StudentHome";
@@ -11,6 +11,11 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./index.css";
 import AdminPost from "./components/pages/Adminpost";
 import Chatroom from "./components/pages/Chatroom";
+
+// Header Import 
+import About from './components/common/About'
+import Contact from "./components/common/Contact";
+import HowToUse from './components/common/howToUse'
 
 const App = () => {
   return (
@@ -30,6 +35,11 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<LoginPage />} />
       <Route path="/register" element={<Register />} />
+
+      {/* Header Routes */}
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/help" element={<HowToUse />} />
 
       {/* Protected Routes */}
       <Route path="/StudentHome" element={<StudentRoute><StudentHome user={user} /></StudentRoute>} />

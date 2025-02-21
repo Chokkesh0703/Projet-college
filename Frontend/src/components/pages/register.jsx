@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:8000";
@@ -65,16 +65,18 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen" style={{
+      backgroundColor: '#f5f0e1',
+    }}>
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Student Registration</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Registration</h1>
 
         {!registered ? (
           <form onSubmit={submit} className="flex flex-col gap-3">
             <input type="text" name="name" placeholder="Name" onChange={handleChange} className="p-2 border rounded" required />
             <input type="text" name="course" placeholder="Course/designation" onChange={handleChange} className="p-2 border rounded" required />
             <input type="text" name="collegeid" placeholder="College ID" onChange={handleChange} className="p-2 border rounded" required />
-            <input type="text" name="unid" placeholder="University Register Number" onChange={handleChange} className="p-2 border rounded"  />
+            <input type="text" name="unid" placeholder="University Register Number" onChange={handleChange} className="p-2 border rounded" />
             <input type="number" name="yearofpass" placeholder="Year of Passout" onChange={handleChange} className="p-2 border rounded" required />
             <input type="email" name="email" placeholder="Email" onChange={handleChange} className="p-2 border rounded" required />
             <input type="text" name="phoneno" placeholder="Phone Number" onChange={handleChange} className="p-2 border rounded" required />
@@ -103,7 +105,7 @@ const Register = () => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

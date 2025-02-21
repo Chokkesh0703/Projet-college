@@ -1,5 +1,7 @@
+const Module = require('module');
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+Module.exports = {
   darkMode: "class",
   content: [
     "./index.html",
