@@ -61,7 +61,7 @@ app.post("/register", async (req, res) => {
     if (check) {
       return res.json("exist");
     }
-    if (!["admin", "student"].includes(role)) {
+    if (!["admin", "student","faculty"].includes(role)) {
       return res.status(400).json({ error: "Invalid role" });
     }
 

@@ -4,18 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:8000";
 
-const Register = () => {
+const FacultyRegister = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     course: "",
     collegeid: "",
-    unid: "",
-    yearofpass: "",
     email: "",
     phoneno: "",
     Password: "",
-    role: "student", // Default role selection
+    role: "faculty", // Default role selection
   });
 
   const [registered, setRegistered] = useState(false);
@@ -69,22 +67,20 @@ const Register = () => {
       backgroundColor: '#f5f0e1',
     }}>
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Student Registration</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Faculty Registration</h1>
 
         {!registered ? (
           <form onSubmit={submit} className="flex flex-col gap-3">
             <input type="text" name="name" placeholder="Name" onChange={handleChange} className="p-2 border rounded" required />
-            <input type="text" name="course" placeholder="Course/designation" onChange={handleChange} className="p-2 border rounded" required />
+            <input type="text" name="course" placeholder="Department, Example : BCA, BBA, B.COM" onChange={handleChange} className="p-2 border rounded" required />
             <input type="text" name="collegeid" placeholder="College ID" onChange={handleChange} className="p-2 border rounded" required />
-            <input type="text" name="unid" placeholder="University Register Number" onChange={handleChange} className="p-2 border rounded" />
-            <input type="number" name="yearofpass" placeholder="Year of Passout" onChange={handleChange} className="p-2 border rounded" required />
             <input type="email" name="email" placeholder="Email" onChange={handleChange} className="p-2 border rounded" required />
             <input type="text" name="phoneno" placeholder="Phone Number" onChange={handleChange} className="p-2 border rounded" required />
             <input type="password" name="Password" placeholder="Password" onChange={handleChange} className="p-2 border rounded" required />
 
             {/* Role Selection Dropdown */}
             <select name="role" value={formData.role} onChange={handleChange} className="p-2 border rounded">
-              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
               {/* <option value="admin">Admin</option> */}
             </select>
 
@@ -109,4 +105,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default FacultyRegister;

@@ -6,6 +6,9 @@ import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import banner from '../../../assets/banner.png'
 
+// React UI
+// import RotatingText from '../../ui/RotatingText'
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -74,18 +77,10 @@ const LoginPage = () => {
         backgroundImage: `url(${banner})`,
       }}>
         <div className="w-full max-w-4xl pl-10 pr-10 pb-10 rounded-xl shadow-lg bg-banner" style={{
-          // backgroundColor: '#cfad99',
-          // backgroundColor: '#1e3d59',
-          // backgroundColor: '#e6e6ea',
           backgroundColor: 'rgba(30, 61, 89, 0.5)',
-
-          // backgroundColor: 'rgba(255, 255, 255, 0.2)',
-          // backdropFilter: "blur('10px')",
-          // border: '1px solid rgba(255, 255, 255, 0.3)',
-          // WebkitBackdropFilter: 'blur(10px)',
-          // borderRadius: '15px',
         }}>
           <h1 className="text-3xl font-bold text-white text-center mb-8 m-10">Welcome!</h1>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -113,8 +108,8 @@ const LoginPage = () => {
                   type="submit"
                   className="w-full text-white font-semibold py-2 rounded-lg transition"
                   style={{
-                    backgroundColor:'#ffc13b',
-                    color:'black'
+                    backgroundColor: '#ffc13b',
+                    color: 'black'
                   }}
                 >
                   Login
@@ -148,8 +143,8 @@ const LoginPage = () => {
                     type="submit"
                     className="w-full  text-white font-semibold py-2 rounded-lg transition"
                     style={{
-                      backgroundColor:'#ffc13b',
-                      color:'black'
+                      backgroundColor: '#ffc13b',
+                      color: 'black'
                     }}
                   >
                     Login
@@ -162,7 +157,7 @@ const LoginPage = () => {
           {/* Register Button */}
           <div className="flex justify-center align-middle gap-4">
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/commomRegistrations")}
               className="mt-4 bg-white text-black font-semibold py-2 px-6 rounded-lg transition"
             >
               Sign In

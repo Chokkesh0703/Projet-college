@@ -27,7 +27,7 @@ const StudentApprove = () => {
   const handleApproval = async (id) => {
     try {
       await axios.put(`http://localhost:8000/api/admin/approve/${id}`);
-      
+
       // Remove approved student from UI
       setStudents((prevStudents) => prevStudents.filter((student) => student._id !== id));
     } catch (error) {
@@ -50,8 +50,8 @@ const StudentApprove = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard - Approve Students</h1>
-      
+      <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
+
       {/* Back to Admin Home Button */}
       <button
         onClick={() => navigate("/AdminHome")}
@@ -60,6 +60,7 @@ const StudentApprove = () => {
         Back to Admin Home
       </button>
 
+      <h1 className="font-bold text-3xl">Student Request</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {students.length === 0 ? (
           <p className="text-gray-500">No pending approvals.</p>
