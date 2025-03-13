@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
@@ -6,43 +6,15 @@ import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import banner from '../../../assets/banner.png'
 
-// React UI
-// import RotatingText from '../../ui/RotatingText'
 
-const LoginPage = () => {
+
+// Simple Login components for email, Google, and Facebook (for illustration purposes)
+const StudentLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [adminId, setAdminId] = useState("");
-  const [adminPassword, setadminPassword] = useState("");
   const [email, setEmail] = useState("");
   const [studentPassword, setStudentPassword] = useState("");
-
-  const [showAdminLogin, setShowAdminLogin] = useState(false);//Toggle
-
-  const handleAdminLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:8000/api/admin/login", {
-        email: adminId,
-        password: adminPassword,
-      });
-
-      if (res.data.message === "Login successful") {
-        login({ role: "admin", id: adminId }, res.data.token);
-        sessionStorage.setItem("token", res.data.token);
-        sessionStorage.setItem("userId", res.data.ID);
-        sessionStorage.setItem("role", res.data.role);
-        sessionStorage.setItem("user", res.data.name);
-        navigate("/AdminHome");
-      } else {
-        alert("Invalid Admin ID or Password.");
-      }
-    } catch (error) {
-      console.error("Admin login error:", error);
-      alert("Login failed. Please try again.");
-    }
-  };
 
   const handleStudentLogin = async (e) => {
     e.preventDefault();
@@ -69,6 +41,183 @@ const LoginPage = () => {
       alert("Login failed. Please try again.");
     }
   };
+  return (
+    <div>
+      {/* Student Login */}
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Student Login</h2>
+        <form onSubmit={handleStudentLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={studentPassword}
+            onChange={(e) => setStudentPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full text-white font-semibold py-2 rounded-lg transition"
+            style={{
+              backgroundColor: '#ffc13b',
+              color: 'black'
+            }}
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const AdminLogin = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [adminId, setAdminId] = useState("");
+  const [adminPassword, setadminPassword] = useState("");
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:8000/api/admin/login", {
+        email: adminId,
+        password: adminPassword,
+      });
+
+      if (res.data.message === "Login successful") {
+        login({ role: "admin", id: adminId }, res.data.token);
+        sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("userId", res.data.ID);
+        sessionStorage.setItem("role", res.data.role);
+        sessionStorage.setItem("user", res.data.name);
+        navigate("/AdminHome");
+      } else {
+        alert("Invalid Admin ID or Password.");
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      alert("Login failed. Please try again.");
+    }
+  };
+
+  return (
+    <div>
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Admin Login</h2>
+        <form onSubmit={handleAdminLogin} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Admin ID"
+            value={adminId}
+            onChange={(e) => setAdminId(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={adminPassword}
+            onChange={(e) => setadminPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full  text-white font-semibold py-2 rounded-lg transition"
+            style={{
+              backgroundColor: '#ffc13b',
+              color: 'black'
+            }}
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const FacultyLogin = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [adminId, setAdminId] = useState("");
+  const [adminPassword, setadminPassword] = useState("");
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:8000/api/faculty/login", {
+        email: adminId,
+        password: adminPassword,
+      });
+
+      if (res.data.message === "Login successful") {
+        login({ role: "faculty", id: adminId }, res.data.token);
+        sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("userId", res.data.ID);
+        sessionStorage.setItem("role", res.data.role);
+        sessionStorage.setItem("user", res.data.name);
+        navigate("/FacultyHome");
+      } else {
+        alert("Invalid Faculty ID or Password.");
+      }
+    } catch (error) {
+      console.error("Faculty login error:", error);
+      alert("Login failed. Please try again.");
+    }
+  };
+  return (
+    <div>
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Faculty Login</h2>
+        <form onSubmit={handleAdminLogin} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Faculty ID"
+            value={adminId}
+            onChange={(e) => setAdminId(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={adminPassword}
+            onChange={(e) => setadminPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="submit"
+            className="w-full  text-white font-semibold py-2 rounded-lg transition"
+            style={{
+              backgroundColor: '#ffc13b',
+              color: 'black'
+            }}
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const LoginTabs = () => {
+  // State to manage the active tab
+  const [activeTab, setActiveTab] = useState('email');  // Default to email tab
+  const navigate = useNavigate();
 
   return (
     <div className="">
@@ -81,79 +230,35 @@ const LoginPage = () => {
         }}>
           <h1 className="text-3xl font-bold text-white text-center mb-8 m-10">Welcome!</h1>
 
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* Student Login */}
-            <div className="p-6 bg-gray-100 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Student Login</h2>
-              <form onSubmit={handleStudentLogin} className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={studentPassword}
-                  onChange={(e) => setStudentPassword(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full text-white font-semibold py-2 rounded-lg transition"
-                  style={{
-                    backgroundColor: '#ffc13b',
-                    color: 'black'
-                  }}
-                >
-                  Login
-                </button>
-              </form>
-            </div>
-
-            {/* Admin Login */}
-            {showAdminLogin && (
-
-              <div className="p-6 bg-gray-100 rounded-lg shadow">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Admin Login</h2>
-                <form onSubmit={handleAdminLogin} className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Admin ID"
-                    value={adminId}
-                    onChange={(e) => setAdminId(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={adminPassword}
-                    onChange={(e) => setadminPassword(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full  text-white font-semibold py-2 rounded-lg transition"
-                    style={{
-                      backgroundColor: '#ffc13b',
-                      color: 'black'
-                    }}
-                  >
-                    Login
-                  </button>
-                </form>
-              </div>
-            )}
+          {/* Tab Buttons */}
+          <div className="mb-5 flex text-[10px] gap-3 sm:text-[1rem] sm:flex-row sm:justify-around">
+            <button
+              onClick={() => setActiveTab('email')}
+              className="px-4 py-2 bg-black text-white font-bold rounded transition duration-200 ease-in-out transform"
+            >
+              Student Login
+            </button>
+            <button
+              onClick={() => setActiveTab('google')}
+              className="px-4 py-2 bg-black text-white font-bold rounded transition duration-200 ease-in-out transform"
+            >
+              Admin Login
+            </button>
+            <button
+              onClick={() => setActiveTab('facebook')}
+              className="px-4 py-2 bg-white text-black xfont-bold rounded transition duration-200 ease-in-out transform"
+            >
+              Faculty Login
+            </button>
           </div>
 
+
+          {/* Conditional rendering based on active tab */}
+          <div>
+            {activeTab === 'email' && <StudentLogin />}
+            {activeTab === 'google' && <AdminLogin />}
+            {activeTab === 'facebook' && <FacultyLogin />}
+          </div>
           {/* Register Button */}
           <div className="flex justify-center align-middle gap-4">
             <button
@@ -162,20 +267,13 @@ const LoginPage = () => {
             >
               Sign In
             </button>
-            {/* Toggle Button */}
-            <button
-              onClick={() => setShowAdminLogin(!showAdminLogin)}
-              className="mt-4 bg-white text-black font-semibold py-2 px-6 rounded-lg transition"
-            >
-              {showAdminLogin ? 'Hide Admin Login' : 'Show Admin Login'}
-            </button>
           </div>
         </div>
       </div>
-      {/* <Banner/> */}
       <Footer />
+      {/* <Banner/> */}
     </div>
   );
 };
 
-export default LoginPage;
+export default LoginTabs;

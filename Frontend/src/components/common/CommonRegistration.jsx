@@ -35,12 +35,12 @@ const CommonRegistration = () => {
           minFontSize={36}
         />
       </div>
-      <div className="flex justify-center align-middle gap-12">
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold' onClick={handleStudent}>Student Login</button>
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold' onClick={handleAdmin}>Admin Login</button>
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold' onClick={handleFaculty}>Faculty Login</button>
+      <div className="flex justify-center align-middle gap-12 h-screen">
+          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleStudent}>Student Login</button>
+          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleAdmin}>Admin Login</button>
+          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleFaculty}>Faculty Login</button>
       </div>
-      <div className="relative h-screen flex justify-center align-middle mt-12">
+      <div className="relative h-screen flex justify-center align-middle mt-12 font-bold text-2xl">
         <ScrollFloat
           animationDuration={1}
           ease='back.inOut(2)'

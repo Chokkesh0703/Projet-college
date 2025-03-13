@@ -30,7 +30,7 @@ const AdminHome = () => {
     }}>
 
       <Header />
-      <div className="container mx-auto mt-40 p-6 bg-white shadow-lg mt-10">
+      <div className="container mx-auto mt-40 p-6 bg-white shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Sivananda Sarma Memorial RV College</h2>
         <p className="text-gray-700 leading-relaxed mb-4">The nucleus of holistic education since 1991. With ‘360-degree Education for Wholeness’ as our foundation, we started out in 1984 to empower passionate students in the fields of commerce, business administration, and computer applications.</p>
         <p className="text-gray-700 leading-relaxed mb-4">Today, we offer numerous undergraduate, postgraduate, and research programmes that promote all-round development while driving innovations and research across domains.</p>

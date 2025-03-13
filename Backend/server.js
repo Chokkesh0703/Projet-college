@@ -6,7 +6,9 @@ import mongoose from "mongoose";
 import User from "./models/User.js";
 import adminRouter from "./routes/adminRoutes.js";
 import studentRouter from "./routes/studentRoutes.js";
+import facultyRouter from "./routes/facultyRoutes.js";
 import approverouter from "./routes/approveRotes.js";
+import facultychatroomroute from "./routes/facultychatroomroute.js"
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import postsRoutes from "./routes/adminPosts.js";
@@ -46,6 +48,8 @@ mongoose
 // Routes
 app.use("/api/admin", adminRouter);
 app.use("/api/student", studentRouter);
+app.use("/api/faculty", facultyRouter);
+app.use("/api/faculty/students", facultychatroomroute);
 app.use("/api", approverouter);
 
 // Test Route

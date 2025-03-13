@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 // import BgStudent3 from '../../assets/ChatDoodle3.png'
 // import AdminScenary from '../../assets/AdminScenary.png'
 import bgForChat from '../../assets/ChatDoodle3.png'
+// import Header from "../common/Header";
 
 const API_BASE_URL = "http://localhost:8000";
 const socket = io(API_BASE_URL);
@@ -141,143 +142,156 @@ const StudentHome = () => {
   };
 
   return (
-    <div className="relative" style={{
-      backgroundImage: `url(${bgForChat})`,
-      backdropFilter: 'blur(30px)',
-    }}>
-      <div className="container mx-auto p-4 max-w-3xl">
-        <div className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
-          border: '2px solid #ffc13b'
-        }}>
-          <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
-            Student Home
-          </h2>
-          <div className="flex justify-center items-center gap-3">
-            <h2 className="font-bold text-2xl">Logout</h2>
-            <button
-              onClick={() => navigate("/")}
-              className="p-3 rounded-full mr-3"
-              style={{
-                backgroundColor: '#ffc13b',
+    <div className="">
+      {/* <Header/> */}
+      <div className="relative" style={{
+        backgroundImage: `url(${bgForChat})`,
+        backdropFilter: 'blur(30px)',
+      }}>
+        <div className="container mx-auto p-4 max-w-3xl">
+          <nav className="">
+            <div className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
+              border: '2px solid #ffc13b'
+            }}>
+              <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
+                Student Home
+              </h2>
+              <div className="flex justify-center items-center gap-3">
+                <button
+                  onClick={() => navigate("/FacultyDetails")}
+                  className="p-3 rounded-full mr-3"
+                  style={{
+                    backgroundColor: '#ffc13b',
 
-              }}
-            >
-              <FaSignOutAlt className="text-2xl" />
-            </button>
-          </div>
-        </div>
+                  }}>
+                  Faculty Details
+                </button>
+                <h2 className="font-bold text-2xl">Logout</h2>
+                <button
+                  onClick={() => navigate("/")}
+                  className="p-3 rounded-full mr-3"
+                  style={{
+                    backgroundColor: '#ffc13b',
+                  }}
+                >
+                  <FaSignOutAlt className="text-2xl" />
+                </button>
+              </div>
+            </div>
+          </nav>
 
 
-        <div className="mt-6 space-y-4">
-          {posts.length === 0 ? (
-            <p className="text-center text-gray-500">No posts available.</p>
-          ) : (
-            posts.map((post) => (
-              <div key={post._id} className="p-4 rounded-lg shadow-lg" style={{
-                backgroundColor: 'white',
-                border: '2px solid #ffc13b',
-              }}>
-                <p className="mb-2">{post.text}</p>
+          <div className="mt-6 space-y-4">
+            {posts.length === 0 ? (
+              <p className="text-center text-gray-500">No posts available.</p>
+            ) : (
+              posts.map((post) => (
+                <div key={post._id} className="p-4 rounded-lg shadow-lg" style={{
+                  backgroundColor: 'white',
+                  border: '2px solid #ffc13b',
+                }}>
+                  <p className="mb-2">{post.text}</p>
 
-                {/* Display Media */}
-                {post.mediaUrl && (
-                  <div className="mt-2">
-                    {post.mediaType === "image" ? (
-                      <img
-                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
-                        alt="Post"
-                        className="w-full rounded-lg"
-                      />
-                    ) : (
-                      <video
-                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
-                        controls
-                        className="w-full rounded-lg"
-                      />
-                    )}
-                  </div>
-                )}
-                {/* Like & Comment Actions */}
-                <div className="flex items-center justify-between mt-4">
-                  <button
-                    onClick={() => handleLike(post._id)}
-                    className="flex items-center space-x-2"
-                  >
-                    {post.likes.includes(userId) ? (
-                      <AiFillLike className="text-red-500" size={20} />
-                    ) : (
-                      <AiOutlineLike className="text-gray-600" size={20} />
-                    )}
-                    <span>{post.likes.length}</span>
-                  </button>
+                  {/* Display Media */}
+                  {post.mediaUrl && (
+                    <div className="mt-2">
+                      {post.mediaType === "image" ? (
+                        <img
+                          src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                          alt="Post"
+                          className="w-full rounded-lg"
+                        />
+                      ) : (
+                        <video
+                          src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                          controls
+                          className="w-full rounded-lg"
+                        />
+                      )}
+                    </div>
+                  )}
+                  {/* Like & Comment Actions */}
+                  <div className="flex items-center justify-between mt-4">
+                    <button
+                      onClick={() => handleLike(post._id)}
+                      className="flex items-center space-x-2"
+                    >
+                      {post.likes.includes(userId) ? (
+                        <AiFillLike className="text-red-500" size={20} />
+                      ) : (
+                        <AiOutlineLike className="text-gray-600" size={20} />
+                      )}
+                      <span>{post.likes.length}</span>
+                    </button>
 
-                  <button
-                    onClick={() =>
-                      setShowComments({
-                        ...showComments,
-                        [post._id]: !showComments[post._id],
-                      })
-                    }
-                    className="flex items-center space-x-2"
-                  >
-                    <FaRegCommentDots className="text-gray-600" size={20} />
-                    <span>{post.comments.length}</span>
-                  </button>
-                </div>
-
-                {/* Comment Section */}
-                {showComments[post._id] && (
-                  <div className="mt-4 p-2 bg-gray-100 rounded">
-                    {post.comments.map((comment) => (
-                      <div
-                        key={comment._id}
-                        className="flex justify-between items-center p-2"
-                      >
-                        <p>
-                          <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
-                          {comment.text}
-                        </p>
-                        <button
-                          onClick={() =>
-                            handleDeleteComment(post._id, comment._id)
-                          }
-                        >
-                          <MdCancel className="text-red-500" />
-                        </button>
-                      </div>
-                    ))}
-                    <input
-                      type="text"
-                      value={commentText[post._id] || ""}
-                      onChange={(e) =>
-                        setCommentText({
-                          ...commentText,
-                          [post._id]: e.target.value,
+                    <button
+                      onClick={() =>
+                        setShowComments({
+                          ...showComments,
+                          [post._id]: !showComments[post._id],
                         })
                       }
-                      className="w-full mt-2 p-2 border rounded"
-                    />
-                    <button
-                      onClick={() => handleCommentSubmit(post._id)}
-                      className="bg-green-500 text-white px-3 py-1 rounded mt-2"
+                      className="flex items-center space-x-2"
                     >
-                      Add Comment
+                      <FaRegCommentDots className="text-gray-600" size={20} />
+                      <span>{post.comments.length}</span>
                     </button>
                   </div>
-                )}
-              </div>
-            ))
-          )}
+
+                  {/* Comment Section */}
+                  {showComments[post._id] && (
+                    <div className="mt-4 p-2 bg-gray-100 rounded">
+                      {post.comments.map((comment) => (
+                        <div
+                          key={comment._id}
+                          className="flex justify-between items-center p-2"
+                        >
+                          <p>
+                            <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
+                            {comment.text}
+                          </p>
+                          <button
+                            onClick={() =>
+                              handleDeleteComment(post._id, comment._id)
+                            }
+                          >
+                            <MdCancel className="text-red-500" />
+                          </button>
+                        </div>
+                      ))}
+                      <input
+                        type="text"
+                        value={commentText[post._id] || ""}
+                        onChange={(e) =>
+                          setCommentText({
+                            ...commentText,
+                            [post._id]: e.target.value,
+                          })
+                        }
+                        className="w-full mt-2 p-2 border rounded"
+                      />
+                      <button
+                        onClick={() => handleCommentSubmit(post._id)}
+                        className="bg-green-500 text-white px-3 py-1 rounded mt-2"
+                      >
+                        Add Comment
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      </div>
-      <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
-        <BsFilterCircle
-          size={30}
-          className="text-white"
-          onClick={() => navigate("/Chatroom")}
-        />
-      </div>
-    </div >
+        <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
+          <BsFilterCircle
+            size={30}
+            className="text-white"
+            onClick={() => navigate("/Chatroom")}
+          />
+        </div>
+      </div >
+    </div>
   );
 };
 

@@ -6,12 +6,12 @@ const userSchema = new mongoose.Schema({
   collegeid: { type: String, },
   unid: { type: String, },
   yearofpass: { type: String, },
-  email: { type: String,  unique: true },
+  email: { type: String, unique: true },
   phoneno: { type: String, },
   Password: { type: String, },
   approve: { type: Boolean, default: false },
-  chatroom:[{type: mongoose.Schema.ObjectId, ref:"Message"}],
-  role: { type: String, enum: ["admin", "student","faculty"], },
+  chatroom: [{ type: mongoose.Schema.ObjectId, ref: "Message" }],
+  role: { type: String, enum: ["admin", "student", "faculty"], },
 });
 // const userSchema = new mongoose.Schema({
 //   name: { type: String, required: true },
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
 //   chatroom:[{type: mongoose.Schema.ObjectId, ref:"Message"}],
 //   role: { type: String, enum: ["admin", "student","faculty"], required :true },
 // });
- 
+
 // userSchema.pre("save", async function (next) {
 //   if (!this.isModified("studentPassword")) return next();
 //   this.studentPassword = await bcrypt.hash(this.studentPassword, 10);
