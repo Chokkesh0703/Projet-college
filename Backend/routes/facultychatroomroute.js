@@ -1,33 +1,119 @@
-import express from "express";
-import User from "../models/User.js";
-import { Server } from "socket.io";
+import { Router } from 'express';
+import Chats from '../models/Chat.js';
+import authenticate from '../middleware/authenticate.js';
 
-const facultychatroomroute = (server) => {
-  const io = new Server(server, {
-    cors: {
-      origin: "http://localhost:5173", 
-      methods: ["GET", "POST", "PUT"],
-    },
-  });
+const Facultychatroomrouter = Router();
 
-const facultychatroomroute = express.Router();
+// Create a new chatroom
+Facultychatroomrouter.post('/create', authenticate, async (req, res) => {
+  const { studentId } = req.body;
 
+  if (!studentId) {
+    return res.status(400).json({ success: false, message: 'Student ID is required' });
+  }
 
-  io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
-  
-    // Join chatroom based on course and year
-    socket.on("joinRoom", ({ course, yearofpass }) => {
-      const room = `${course}-${yearofpass}`;
-      socket.join(room);
-      console.log(`User ${socket.id} joined room: ${room}`);
+  try {
+    // Check if chatroom already exists between the student and faculty
+    let chatroom = await Chats.findOne({ student: studentId, faculty: req.user.id });
+    if (chatroom) {
+      return res.status(200).json({ success: true, chatroom, message: 'Chatroom already exists' });
+    }
+
+    // If not, create a new chatroom
+    chatroom = new Chats({ student: studentId, faculty: req.user.id });
+    await chatroom.save();
+    res.status(201).json({ success: true, chatroom, message: 'Chatroom created successfully' });
+  } catch (error) {
+    console.error('Error creating chatroom:', error);
+    return res.status(500).json({ success: false, message: 'Server Error' });
+  }
+});
+
+// Fetch all chatrooms for the logged-in faculty
+Facultychatroomrouter.get('/all', async (req, res) => {
+  try {
+    // Fetch chatrooms for the logged-in faculty member
+    const chatrooms = await Chats.find({  })
+      .populate('student', 'name email')  // Populate student details
+      .sort({ updatedAt: -1 });  // Sort by latest updated chatrooms
+
+    res.status(200).json({ success: true, chatrooms });
+  } catch (error) {
+    console.error('Error fetching chatrooms:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+});
+
+// Send message in chatroom
+Facultychatroomrouter.post('/send_message', authenticate, async (req, res) => {
+  const { chatroomId, message, senderId, sendername } = req.body;
+
+  if (!chatroomId || !message || !senderId) {
+    return res.status(400).json({ success: false, message: 'Chatroom ID, message, and sender ID are required' });
+  }
+
+  try {
+    const chatroom = await Chats.findById(chatroomId);
+    if (!chatroom) {
+      return res.status(404).json({ success: false, message: 'Chatroom not found' });
+    }
+
+    // Add the new message to the chatroom
+    const newMessage = { sender: senderId, message, sendname: sendername, timestamp: new Date() };
+    chatroom.messages.push(newMessage);
+
+    // Update unread message count based on sender
+    if (senderId.toString() === chatroom.faculty.toString()) {
+      chatroom.studentUnreadCount += 1; // Increment unread messages for student
+    } else {
+      chatroom.facultyUnreadCount += 1; // Increment unread messages for faculty
+    }
+
+    await chatroom.save();
+
+    // Emit the new message to all connected clients in the chatroom
+    req.io.to(chatroomId).emit('receive_message', newMessage);
+
+    res.status(201).json({ success: true, message: 'Message sent successfully', newMessage });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return res.status(500).json({ success: false, message: 'Error sending message', details: error.message });
+  }
+});
+
+// Mark messages as read
+Facultychatroomrouter.post('/mark_as_read', authenticate, async (req, res) => {
+  const { chatroomId } = req.body;
+
+  if (!chatroomId) {
+    return res.status(400).json({ success: false, message: 'Chatroom ID is required' });
+  }
+
+  try {
+    const chatroom = await Chats.findById(chatroomId);
+    if (!chatroom) {
+      return res.status(404).json({ success: false, message: 'Chatroom not found' });
+    }
+
+    // Mark all messages as read and reset unread message count for the logged-in user
+    if (req.user.id.toString() === chatroom.faculty.toString()) {
+      chatroom.facultyUnreadCount = 0; // Reset unread messages for faculty
+    } else {
+      chatroom.studentUnreadCount = 0; // Reset unread messages for student
+    }
+
+    chatroom.messages.forEach((message) => {
+      if (message.sender.toString() !== req.user.id.toString()) {
+        message.isRead = true;
+      }
     });
-  
-    // Handle disconnection
-    socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
-    });
-  });
-}
 
-export default facultychatroomroute;
+    await chatroom.save();
+    res.status(200).json({ success: true, message: 'Messages marked as read' });
+  } catch (error) {
+    console.error('Error marking messages as read:', error);
+    return res.status(500).json({ success: false, message: 'Error marking messages as read', details: error.message });
+  }
+});
+
+export default Facultychatroomrouter;

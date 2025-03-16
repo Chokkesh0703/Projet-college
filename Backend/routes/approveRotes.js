@@ -17,18 +17,16 @@ approverouter.get("/admin/students", async (req, res) => {
 approverouter.get("/admin/faculties", async (req, res) => {
   try {
       const students = await User.find({ approve: true, role: "faculty" }); // Only approved students
-      console.log(students);
       res.json(students);
   } catch (error) {
       res.status(500).json({ error: "Failed to fetch students" });
   }
 });
 
-approverouter.get("/admin/students", async (req, res) => {
+approverouter.get("/admin/studentsdetails", async (req, res) => {
   try {
-      const students = await User.find({ approve: true, role: "student" }); // Only approved students
-      console.log(students);
-      res.json(students);
+      const faculty = await User.find({ approve: true, role: "student" }); // Only approved students
+      res.json(faculty);
   } catch (error) {
       res.status(500).json({ error: "Failed to fetch students" });
   }

@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
-import Header from "@/components/common/Header";
-import Footer from "@/components/common/Footer";
-import banner from '../../../assets/banner.png'
-
-
+import banner from "../../../assets/banner.png";
 
 // Simple Login components for email, Google, and Facebook (for illustration purposes)
 const StudentLogin = () => {
@@ -32,6 +28,7 @@ const StudentLogin = () => {
         sessionStorage.setItem("user", res.data.name);
         sessionStorage.setItem("course", res.data.course);
         sessionStorage.setItem("yearofpass", res.data.yearofpass);
+        localStorage.setItem('userToken', res.data.token);
         navigate("/StudentHome");
       } else {
         alert("Invalid credentials! Please try again.");
@@ -44,8 +41,10 @@ const StudentLogin = () => {
   return (
     <div>
       {/* Student Login */}
-      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Student Login</h2>
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:mx-10 lg:mx-20 xl:mx-40">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+          Student Login
+        </h2>
         <form onSubmit={handleStudentLogin} className="space-y-4">
           <input
             type="email"
@@ -67,8 +66,8 @@ const StudentLogin = () => {
             type="submit"
             className="w-full text-white font-semibold py-2 rounded-lg transition"
             style={{
-              backgroundColor: '#ffc13b',
-              color: 'black'
+              backgroundColor: "#ffc13b",
+              color: "black",
             }}
           >
             Login
@@ -100,6 +99,7 @@ const AdminLogin = () => {
         sessionStorage.setItem("userId", res.data.ID);
         sessionStorage.setItem("role", res.data.role);
         sessionStorage.setItem("user", res.data.name);
+        localStorage.setItem('userToken', res.data.token);
         navigate("/AdminHome");
       } else {
         alert("Invalid Admin ID or Password.");
@@ -112,8 +112,10 @@ const AdminLogin = () => {
 
   return (
     <div>
-      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Admin Login</h2>
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:mx-10 lg:mx-20 xl:mx-40">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+          Admin Login
+        </h2>
         <form onSubmit={handleAdminLogin} className="space-y-4">
           <input
             type="text"
@@ -133,10 +135,10 @@ const AdminLogin = () => {
           />
           <button
             type="submit"
-            className="w-full  text-white font-semibold py-2 rounded-lg transition"
+            className="w-full text-white font-semibold py-2 rounded-lg transition"
             style={{
-              backgroundColor: '#ffc13b',
-              color: 'black'
+              backgroundColor: "#ffc13b",
+              color: "black",
             }}
           >
             Login
@@ -168,6 +170,7 @@ const FacultyLogin = () => {
         sessionStorage.setItem("userId", res.data.ID);
         sessionStorage.setItem("role", res.data.role);
         sessionStorage.setItem("user", res.data.name);
+        localStorage.setItem('userToken', res.data.token);
         navigate("/FacultyHome");
       } else {
         alert("Invalid Faculty ID or Password.");
@@ -179,8 +182,10 @@ const FacultyLogin = () => {
   };
   return (
     <div>
-      <div className="p-6 bg-gray-100 rounded-lg shadow sm:ml-50 sm:mr-50">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Faculty Login</h2>
+      <div className="p-6 bg-gray-100 rounded-lg shadow sm:mx-10 lg:mx-20 xl:mx-40">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+          Faculty Login
+        </h2>
         <form onSubmit={handleAdminLogin} className="space-y-4">
           <input
             type="text"
@@ -200,10 +205,10 @@ const FacultyLogin = () => {
           />
           <button
             type="submit"
-            className="w-full  text-white font-semibold py-2 rounded-lg transition"
+            className="w-full text-white font-semibold py-2 rounded-lg transition"
             style={{
-              backgroundColor: '#ffc13b',
-              color: 'black'
+              backgroundColor: "#ffc13b",
+              color: "black",
             }}
           >
             Login
@@ -215,49 +220,51 @@ const FacultyLogin = () => {
 };
 
 const LoginTabs = () => {
-  // State to manage the active tab
-  const [activeTab, setActiveTab] = useState('email');  // Default to email tab
+  const [activeTab, setActiveTab] = useState("email");
   const navigate = useNavigate();
 
   return (
-    <div className="">
-      <Header />
-      <div className="flex items-center justify-center mt-8 h-screen bg-s bg-cover bg-no-repeats from-blue-500 to-purple-600" style={{
-        backgroundImage: `url(${banner})`,
-      }}>
-        <div className="w-full max-w-4xl pl-10 pr-10 pb-10 rounded-xl shadow-lg bg-banner" style={{
-          backgroundColor: 'rgba(30, 61, 89, 0.5)',
-        }}>
-          <h1 className="text-3xl font-bold text-white text-center mb-8 m-10">Welcome!</h1>
+    <div className=" w-full">
+
+      <div
+        className="flex items-center justify-center min-h-screen bg-cover bg-no-repeat bg-gradient-to-br from-blue-500 to-purple-600 "
+        style={{ backgroundImage: `url(${banner})` }}
+      >
+        <div
+          className="w-full m-2  max-w-4xl px-4 py-10 sm:px-10 rounded-xl shadow-lg relative "
+          style={{ backgroundColor: "rgba(30, 61, 89, 0.5)" }}
+        >
+          <h1 className="text-3xl font-bold text-white text-center mb-8">
+            Welcome!
+          </h1>
 
           {/* Tab Buttons */}
-          <div className="mb-5 flex text-[10px] gap-3 sm:text-[1rem] sm:flex-row sm:justify-around">
+          <div className="mb-5 flex flex-col sm:flex-row gap-3 text-sm sm:text-base justify-around">
             <button
-              onClick={() => setActiveTab('email')}
-              className="px-4 py-2 bg-black text-white font-bold rounded transition duration-200 ease-in-out transform"
+              onClick={() => setActiveTab("email")}
+              className="px-4 py-2 bg-black text-white font-bold rounded transition transform hover:scale-105"
             >
               Student Login
             </button>
             <button
-              onClick={() => setActiveTab('google')}
-              className="px-4 py-2 bg-black text-white font-bold rounded transition duration-200 ease-in-out transform"
+              onClick={() => setActiveTab("google")}
+              className="px-4 py-2 bg-black text-white font-bold rounded transition transform hover:scale-105"
             >
               Admin Login
             </button>
             <button
-              onClick={() => setActiveTab('facebook')}
+              onClick={() => setActiveTab("facebook")}
               className="px-4 py-2 bg-white text-black xfont-bold rounded transition duration-200 ease-in-out transform"
             >
               Faculty Login
             </button>
           </div>
 
-
           {/* Conditional rendering based on active tab */}
           <div>
-            {activeTab === 'email' && <StudentLogin />}
-            {activeTab === 'google' && <AdminLogin />}
-            {activeTab === 'facebook' && <FacultyLogin />}
+            {activeTab === "email" && <StudentLogin />}
+            {activeTab === "google" && <AdminLogin />}
+            {activeTab === "facebook" && <FacultyLogin />}
           </div>
           {/* Register Button */}
           <div className="flex justify-center align-middle gap-4">
@@ -270,7 +277,7 @@ const LoginTabs = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      
       {/* <Banner/> */}
     </div>
   );

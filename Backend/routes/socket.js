@@ -9,7 +9,7 @@ const setupSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("New client connected:", socket.id);
+    // console.log("New client connected:", socket.id);
 
     socket.on("likePost", (updatedPost) => {
       io.emit("postUpdated", updatedPost);
@@ -20,7 +20,7 @@ const setupSocket = (server) => {
     });
 
     socket.on("disconnect", () => {
-      console.log("Client disconnected:", socket.id);
+      // console.log("Client disconnected:", socket.id);
     });
   });
 

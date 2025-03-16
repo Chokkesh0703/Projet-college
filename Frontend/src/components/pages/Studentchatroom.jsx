@@ -5,7 +5,7 @@ import { useLocation, useParams } from "react-router-dom";
 // Initialize socket connection
 const socket = io("http://localhost:8000");
 
-const FacultyChatroom = () => {
+const Studentchatroom = () => {
  
   const location = useLocation();
   const { chatroom } = location.state || {}; // Extracting chatroom and students from state passed by routing
@@ -141,4 +141,4 @@ const FacultyChatroom = () => {
   );
 };
 
-export default FacultyChatroom;
+export default Studentchatroom;

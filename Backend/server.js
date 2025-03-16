@@ -8,7 +8,6 @@ import adminRouter from "./routes/adminRoutes.js";
 import studentRouter from "./routes/studentRoutes.js";
 import facultyRouter from "./routes/facultyRoutes.js";
 import approverouter from "./routes/approveRotes.js";
-import facultychatroomroute from "./routes/facultychatroomroute.js"
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import postsRoutes from "./routes/adminPosts.js";
@@ -17,6 +16,8 @@ import { dirname } from "path";
 import path from "path"
 import setupSocket from "./routes/socket.js";
 import setupChatroomRoutes from "./routes/chatroom.js";
+import Facultychatroomrouter from "./routes/facultychatroomroute.js";
+import Chats from "./models/Chat.js";
 
 
 dotenv.config();
@@ -49,8 +50,8 @@ mongoose
 app.use("/api/admin", adminRouter);
 app.use("/api/student", studentRouter);
 app.use("/api/faculty", facultyRouter);
-app.use("/api/faculty/students", facultychatroomroute);
 app.use("/api", approverouter);
+
 
 // Test Route
 app.get("/", (req, res) => {
@@ -137,7 +138,7 @@ app.use("/api/chatroom", chatroomRouter);
 
 //  Handle Socket.io connections
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  // console.log("A user connected:", socket.id);
 
   // Join chatroom based on course and year
   socket.on("joinRoom", ({ course, yearofpass }) => {
@@ -151,6 +152,63 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 });
+
+// Listen for new socket connections faculty and student one to one interaction
+io.on('connection', (socket) => {
+  // console.log('A user connected:', socket.id);
+
+  // Join a chatroom
+  socket.on('join_room', async (chatroomId) => {
+      socket.join(chatroomId);
+      console.log(`User joined chatroom: ${chatroomId}`);
+
+      try {
+        // Fetch previous messages from the chatroom
+        const chatroom = await Chats.findById(chatroomId);
+        if (chatroom) {
+            // Send previous messages to the user who joined
+            socket.emit('load_previous_messages', chatroom.messages);
+        }
+    } catch (error) {
+        console.error('Error loading previous messages:', error);
+    }
+
+  });
+
+
+  app.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
+
+  // Listen for new messages
+  socket.on('send_message', async (chatMessage) => {
+      const { chatroomId, senderId, message, sendername } = chatMessage;
+      console.log(chatMessage)
+
+      try {
+          // Save the message to the database
+          const chatroom = await Chats.findById(chatroomId);
+          if (chatroom) {
+              chatroom.messages.push({ sender: senderId, message , sendname : sendername });
+              await chatroom.save();
+
+              // Emit the message to the chatroom
+              io.to(chatroomId).emit('receive_message', { senderId, message, sendername });
+          }
+      } catch (error) {
+          console.error('Error sending message:', error);
+      }
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+      console.log('User disconnected:', socket.id);
+  });
+});
+
+// Add your API routes
+app.use('/api/chat', Facultychatroomrouter);
 
 // Start Server
 const PORT = 8000;

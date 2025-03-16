@@ -168,7 +168,7 @@ router.delete("/comment/:postId/:commentId", async (req, res) => {
     if (!comment) return res.status(404).json({ error: "Comment not found" });
 
     //  Admin can delete any comment, student can delete only their own
-    if (Role !== "admin" && comment.user.toString() !== userId) {
+    if (Role !== "admin" && Role !== "faculty" &&  comment.user.toString() !== userId) {
       console.log(Role , userId)
       return res.status(403).json({ error: "Unauthorized to delete this comment" });
     }

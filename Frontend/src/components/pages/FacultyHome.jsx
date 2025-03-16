@@ -161,7 +161,7 @@ const FacultyHome = () => {
   const handleDelete = async (postId) => {
     const token = sessionStorage.getItem("token");
     const Role = sessionStorage.getItem("role");
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     if (!token) {
       console.error("User not authenticated");
@@ -327,7 +327,7 @@ const FacultyHome = () => {
               <BsFilterCircle
                 size={30}
                 className="text-white"
-                onClick={() => navigate("/Chatroom")}
+                onClick={() => navigate("/Facultychatlist")}
               />
             </div>
       <Footer />

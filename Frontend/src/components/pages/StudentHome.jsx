@@ -8,7 +8,7 @@ import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 // import BgStudent3 from '../../assets/ChatDoodle3.png'
 // import AdminScenary from '../../assets/AdminScenary.png'
-import bgForChat from '../../assets/ChatDoodle3.png'
+import bgForChat from "../../assets/ChatDoodle3.png";
 // import Header from "../common/Header";
 
 const API_BASE_URL = "http://localhost:8000";
@@ -63,11 +63,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-              ...post,
-              likes: post.likes.includes(userId)
-                ? post.likes.filter((id) => id !== userId)
-                : [...post.likes, userId],
-            }
+                ...post,
+                likes: post.likes.includes(userId)
+                  ? post.likes.filter((id) => id !== userId)
+                  : [...post.likes, userId],
+              }
             : post
         )
       );
@@ -125,11 +125,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-              ...post,
-              comments: post.comments.filter(
-                (comment) => comment._id !== commentId
-              ),
-            }
+                ...post,
+                comments: post.comments.filter(
+                  (comment) => comment._id !== commentId
+                ),
+              }
             : post
         )
       );
@@ -142,17 +142,18 @@ const StudentHome = () => {
   };
 
   return (
-    <div className="">
+    <div className="w-full relative">
       {/* <Header/> */}
-      <div className="relative" style={{
-        backgroundImage: `url(${bgForChat})`,
-        backdropFilter: 'blur(30px)',
-      }}>
+      <img src={bgForChat} alt="Banner" className="absolute bg-repeat  w-full"/>
+      <div className="relative max-h-svh">
         <div className="container mx-auto p-4 max-w-3xl">
           <nav className="">
-            <div className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
-              border: '2px solid #ffc13b'
-            }}>
+            <div
+              className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer"
+              style={{
+                border: "2px solid #ffc13b",
+              }}
+            >
               <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
                 Student Home
               </h2>
@@ -161,17 +162,26 @@ const StudentHome = () => {
                   onClick={() => navigate("/FacultyDetails")}
                   className="p-3 rounded-full mr-3"
                   style={{
-                    backgroundColor: '#ffc13b',
-
-                  }}>
+                    backgroundColor: "#ffc13b",
+                  }}
+                >
                   Faculty Details
+                </button>
+                <button
+                  onClick={() => navigate("/StudentChatlist")}
+                  className="p-3 rounded-full mr-3"
+                  style={{
+                    backgroundColor: "#ffc13b",
+                  }}
+                >
+                  Faculty chat
                 </button>
                 <h2 className="font-bold text-2xl">Logout</h2>
                 <button
                   onClick={() => navigate("/")}
                   className="p-3 rounded-full mr-3"
                   style={{
-                    backgroundColor: '#ffc13b',
+                    backgroundColor: "#ffc13b",
                   }}
                 >
                   <FaSignOutAlt className="text-2xl" />
@@ -180,16 +190,19 @@ const StudentHome = () => {
             </div>
           </nav>
 
-
           <div className="mt-6 space-y-4">
             {posts.length === 0 ? (
               <p className="text-center text-gray-500">No posts available.</p>
             ) : (
               posts.map((post) => (
-                <div key={post._id} className="p-4 rounded-lg shadow-lg" style={{
-                  backgroundColor: 'white',
-                  border: '2px solid #ffc13b',
-                }}>
+                <div
+                  key={post._id}
+                  className="p-4 rounded-lg shadow-lg"
+                  style={{
+                    backgroundColor: "white",
+                    border: "2px solid #ffc13b",
+                  }}
+                >
                   <p className="mb-2">{post.text}</p>
 
                   {/* Display Media */}
@@ -247,7 +260,9 @@ const StudentHome = () => {
                           className="flex justify-between items-center p-2"
                         >
                           <p>
-                            <strong>{comment.user?.name || "Anonymous"}:</strong>{" "}
+                            <strong>
+                              {comment.user?.name || "Anonymous"}:
+                            </strong>{" "}
                             {comment.text}
                           </p>
                           <button
@@ -283,14 +298,14 @@ const StudentHome = () => {
             )}
           </div>
         </div>
-        <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
+      </div>
+      <div className=" sticky mr-6 w-15 bottom-0 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
           <BsFilterCircle
             size={30}
             className="text-white"
             onClick={() => navigate("/Chatroom")}
           />
         </div>
-      </div >
     </div>
   );
 };

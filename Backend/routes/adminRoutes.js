@@ -11,7 +11,7 @@ router.post("/login", async (req, res) => {
   console.log(" Login Request Received:", { email, password });
 
   try {
-    // 🔹 Check if admin exists
+    //  Check if admin exists
     const admin = await User.findOne({ email: email.trim() }); // Trim whitespace
     if (!admin) {
       console.log(" Admin Not Found");

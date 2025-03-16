@@ -18,7 +18,7 @@ const verifyAdmin = async (req, res, next) => {
     const admin = await User.findById(decoded.id);
     if (!admin) return res.status(404).json({ message: "User not found" });
 
-    if (admin.role !== "admin") {
+    if (admin.role !== "admin" && admin.role !== "faculty") {
       return res.status(403).json({ message: "Access Denied, Admins Only" });
     }
 

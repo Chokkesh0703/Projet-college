@@ -1,136 +1,142 @@
-// import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Grid, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from "@mui/icons-material/Info";
+import PhoneIcon from "@mui/icons-material/Phone";
+import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import Logo from "../../assets/logo.png";
 
-import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
-import PhoneIcon from '@mui/icons-material/Phone';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-// import SchoolIcon from '@mui/icons-material/School';
-import Logo from '../../assets/logo.png';
-
-import { useState } from 'react';
-
-const MyHeader = styled(Grid)(({ theme }) => ({
-    backgroundColor: '#ffc13b',
-    // backgroundColor: '#2ab7ca',
-    // backgroundColor: 'ghostwhite',
-    // backgroundColor: '#f4efe8',
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'left',
-    alignItems: 'center',
-    height: '12vh',
-    width: '100vw',
-    position: 'fixed',
-    top: 0,
-    zIndex: 100,
-    padding: '0 20px',
-    '& img': {
-        height: '80px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    '& .typography': {
-        display: 'flex',
-        justifyContent: 'right',
-        alignItems: 'center',
-        gap: '50px',
-    },
-    '& .IndivialTypo': {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '4px',
-        color: 'black',
-        fontFamily: 'sans-serif',
-        fontWeight: 'bold',
-        fontSize: '20px',
-        cursor: 'pointer'
-    },
-    '& Drawer': {
-        display: 'none'
-    },
-    [theme.breakpoints.down('lg')]: {
-        justifyContent: 'space-between',
-        '& img': {
-            height: '80px',
-        },
-        '& .typography': {
-            display: 'none'
-        },
-    },
-    [theme.breakpoints.down('md')]: {
-        justifyContent: 'space-between',
-        '& img': {
-            height: '80px',
-        },
-        '& .typography': {
-            display: 'none'
-        },
-    },
-    [theme.breakpoints.down('sm')]: {
-        justifyContent: 'space-between',
-        '& img': {
-            height: '80px',
-        },
-        '& .typography': {
-            display: 'none'
-        },
-    },
-}));
 
 const Header = () => {
-    const navigate = useNavigate();
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
-    return (
-        <>
-            <MyHeader container>
-                <Grid item md={1} xs={6} sm={6}>
-                    <img src={Logo} alt="logo" />
-                </Grid>
-                <Grid item md={11} xs={6} sm={6} className="typography">
-                    <Typography className='IndivialTypo' onClick={() => navigate('/')}><HomeIcon />Home</Typography>
-                    <Typography className='IndivialTypo' onClick={() => navigate('/about')}><InfoIcon />About</Typography>
-                    <Typography className='IndivialTypo' onClick={() => navigate('/contact')}><PhoneIcon />Contact</Typography>
-                    <Typography className='IndivialTypo' onClick={() => navigate('/help')}><HelpCenterIcon />How to Use ?</Typography>
-                </Grid>
-                <IconButton edge="end" color="default" aria-label="menu" onClick={toggleSidebar} sx={{
-                    display: { xs: 'block', sm: 'block', md: 'block', lg: 'none', xl: 'none' },
-                }}>
-                    <MenuIcon />
-                </IconButton>
-            </MyHeader>
-            <Drawer anchor="right" open={isSidebarOpen} onClose={toggleSidebar}>
-                <List>
-                    <ListItem button onClick={() => { navigate('/'); toggleSidebar(); }}>
-                        <ListItemIcon><HomeIcon /></ListItemIcon>
-                        <ListItemText primary="Home" />
-                    </ListItem>
-                    <ListItem button onClick={() => { navigate('/about'); toggleSidebar(); }}>
-                        <ListItemIcon><InfoIcon /></ListItemIcon>
-                        <ListItemText primary="About" />
-                    </ListItem>
-                    <ListItem button onClick={() => { navigate('/contact'); toggleSidebar(); }}>
-                        <ListItemIcon><PhoneIcon /></ListItemIcon>
-                        <ListItemText primary="Contact" />
-                    </ListItem>
-                    <ListItem button onClick={() => { navigate('/help'); toggleSidebar(); }}>
-                        <ListItemIcon><HelpCenterIcon /></ListItemIcon>
-                        <ListItemText primary="Help" />
-                    </ListItem>
-                </List>
-            </Drawer>
-        </>
-    );
+  return (
+    <>
+      {/* Main Header */}
+      <div className="flex justify-between items-center bg-yellow-400 p-4 fixed w-full top-0 z-50 shadow-md 
+       " style={{position: "relative"}} >
+        {/* Logo Section */}
+        <div className="flex items-center">
+          <img src={Logo} alt="logo" className="h-20" />
+        </div>
+
+        {/* Navigation Links (hidden on small screens, visible on medium and above) */}
+        <div className="hidden md:flex space-x-10">
+          <Typography
+            className="cursor-pointer text-black font-bold text-lg"
+            onClick={() => navigate("/")}
+          >
+            <HomeIcon className="mr-2" /> Home
+          </Typography>
+          <Typography
+            className="cursor-pointer text-black font-bold text-lg"
+            onClick={() => navigate("/about")}
+          >
+            <InfoIcon className="mr-2" /> About
+          </Typography>
+          <Typography
+            className="cursor-pointer text-black font-bold text-lg"
+            onClick={() => navigate("/contact")}
+          >
+            <PhoneIcon className="mr-2" /> Contact
+          </Typography>
+          <Typography
+            className="cursor-pointer text-black font-bold text-lg"
+            onClick={() => navigate("/help")}
+          >
+            <HelpCenterIcon className="mr-2" /> How to Use ?
+          </Typography>
+        </div>
+
+        {/* Mobile Menu Button (visible on small screens only) */}
+        <div className="md:hidden">
+          <IconButton
+            edge="end"
+            color="default"
+            aria-label="menu"
+            onClick={toggleSidebar}
+            className="md:hidden" // Menu button hidden on medium screens and above
+          >
+            <MenuIcon />
+          </IconButton>
+        </div>
+      </div>
+
+      {/* Mobile Sidebar Drawer (visible on small screens only) */}
+      <Drawer
+        anchor="right"
+        open={isSidebarOpen}
+        onClose={toggleSidebar}
+        className="" // Hide the Drawer on medium screens and above
+      >
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              navigate("/");
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              navigate("/about");
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary="About" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              navigate("/contact");
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <PhoneIcon />
+            </ListItemIcon>
+            <ListItemText primary="Contact" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              navigate("/help");
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <HelpCenterIcon />
+            </ListItemIcon>
+            <ListItemText primary="Help" />
+          </ListItem>
+        </List>
+      </Drawer>
+    </>
+  );
 };
 
 export default Header;
