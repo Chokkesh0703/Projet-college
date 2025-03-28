@@ -207,9 +207,8 @@ const AdminPost = () => {
       backgroundImage: `url(${BgStudent3})`,
       backdropFilter: 'blur(40px)'
     }}>
-      <Header />
       <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex justify-between align-middle bg-white  mt-28 p-4 rounded-full shadow-lg cursor-pointer" style={{
+        <div className="flex justify-between align-middle bg-white  mt-8 p-4 rounded-full shadow-lg cursor-pointer" style={{
           border: '2px solid #ffc13b'
         }}>
           <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">

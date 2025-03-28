@@ -50,5 +50,6 @@ const ChatSchema = new Schema({
   timestamps: true // Automatically adds createdAt and updatedAt
 });
 
+
 const Chats = mongoose.model('Chats', ChatSchema);
 export default Chats;

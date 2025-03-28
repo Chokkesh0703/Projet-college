@@ -6,14 +6,25 @@ const FacultyChatlist = () => {
   const [chatrooms, setChatrooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const facultyId = sessionStorage.getItem("userId");
+
 
   useEffect(() => {
-    fetchChatrooms();
-  }, []);
+    if (facultyId) {
+      fetchChatrooms(facultyId); // Pass the studentId to the function
+    } else {
+      console.error('Faculty ID is not provided');
+    }
+  }, [facultyId]);
 
-  const fetchChatrooms = async () => {
+  const fetchChatrooms = async (facultyId) => {
+    if (!facultyId) {
+      console.error('Faculty ID is not provided');
+      return;
+    }
+
     try {
-      const response = await axios.get('http://localhost:8000/api/chat/all'); // Fetch all chatrooms for faculty
+      const response = await axios.get(`http://localhost:8000/api/chat/all/${facultyId}`);
       setChatrooms(response.data.chatrooms);
       setLoading(false);
     } catch (error) {

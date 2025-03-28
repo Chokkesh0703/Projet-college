@@ -6,14 +6,24 @@ const StudentChatlist = () => {
   const [chatrooms, setChatrooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const studentId = sessionStorage.getItem("userId");
 
   useEffect(() => {
-    fetchChatrooms();
-  }, []);
+    if (studentId) {
+      fetchChatrooms(studentId); // Pass the studentId to the function
+    } else {
+      console.error('Student ID is not provided');
+    }
+  }, [studentId]);
 
-  const fetchChatrooms = async () => {
+  const fetchChatrooms = async (studentId) => {
+    if (!studentId) {
+      console.error('Student ID is not provided');
+      return;
+    }
+
     try {
-      const response = await axios.get('http://localhost:8000/api/chat/all'); // Fetch all chatrooms 
+      const response = await axios.get(`http://localhost:8000/api/chat/student/${studentId}`);
       setChatrooms(response.data.chatrooms);
       setLoading(false);
     } catch (error) {
@@ -23,7 +33,6 @@ const StudentChatlist = () => {
   };
 
   const handleChatroomClick = (chatroom) => {
-    // Navigate to the chatroom page
     navigate(`/Studentchatroom/${chatroom._id}`, { state: { chatroom } });
   };
 
@@ -42,7 +51,6 @@ const StudentChatlist = () => {
               onClick={() => handleChatroomClick(chatroom)}
               className="cursor-pointer border rounded-lg p-4 shadow-md bg-white hover:bg-gray-100 transition relative"
             >
-              {/* If the chatroom has unread messages, show the dot */}
               {chatroom.unreadMessages && (
                 <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>
               )}

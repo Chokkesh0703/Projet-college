@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Chats from '../models/Chat.js';
 import authenticate from '../middleware/authenticate.js';
+import mongoose from 'mongoose';
 
 const Facultychatroomrouter = Router();
 
@@ -30,11 +31,37 @@ Facultychatroomrouter.post('/create', authenticate, async (req, res) => {
 });
 
 // Fetch all chatrooms for the logged-in faculty
-Facultychatroomrouter.get('/all', async (req, res) => {
+Facultychatroomrouter.get('/all/:facultyId', async (req, res) => {
+  const { facultyId } = req.params;  // Get studentId from request params
+
+  if (!mongoose.Types.ObjectId.isValid(facultyId)) {
+    return res.status(400).json({ success: false, message: 'Invalid faculty ID' });
+  }
+
   try {
-    // Fetch chatrooms for the logged-in faculty member
-    const chatrooms = await Chats.find({  })
-      .populate('student', 'name email')  // Populate student details
+    // Fetch chatrooms where the student ID matches
+    const chatrooms = await Chats.find({ faculty: facultyId })
+      .populate('student', 'name email')  // Populate faculty details
+      .sort({ updatedAt: -1 });  // Sort by latest updated chatrooms
+
+    res.status(200).json({ success: true, chatrooms });
+  } catch (error) {
+    console.error('Error fetching chatrooms:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+});
+
+Facultychatroomrouter.get('/student/:studentId', async (req, res) => {
+  const { studentId } = req.params;  // Get studentId from request params
+
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    return res.status(400).json({ success: false, message: 'Invalid student ID' });
+  }
+
+  try {
+    // Fetch chatrooms where the student ID matches
+    const chatrooms = await Chats.find({ student: studentId })
+      .populate('faculty', 'name email')  // Populate faculty details
       .sort({ updatedAt: -1 });  // Sort by latest updated chatrooms
 
     res.status(200).json({ success: true, chatrooms });
