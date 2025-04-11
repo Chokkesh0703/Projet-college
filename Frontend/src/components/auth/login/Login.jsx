@@ -5,9 +5,9 @@ import Footer from "@/components/common/Footer";
 
 function Login() {
   return (
-    <div  className="w-full">
-        <Header />
-        <LoginTabs />
+    <div className="w-full">
+      <Header />
+      <LoginTabs />
       <Footer />
     </div>
   );

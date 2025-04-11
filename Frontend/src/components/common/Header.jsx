@@ -41,25 +41,25 @@ const Header = () => {
             className="cursor-pointer text-black font-bold text-lg"
             onClick={() => navigate("/")}
           >
-            <HomeIcon className="mr-2" /> Home
+            <HomeIcon className="mr-4 ml-4" />Home
           </Typography>
           <Typography
             className="cursor-pointer text-black font-bold text-lg"
             onClick={() => navigate("/about")}
           >
-            <InfoIcon className="mr-2" /> About
+            <InfoIcon className="mr-4 ml-4" />About
           </Typography>
           <Typography
             className="cursor-pointer text-black font-bold text-lg"
             onClick={() => navigate("/contact")}
           >
-            <PhoneIcon className="mr-2" /> Contact
+            <PhoneIcon className="mr-4 ml-4" />Contact
           </Typography>
           <Typography
             className="cursor-pointer text-black font-bold text-lg"
             onClick={() => navigate("/help")}
           >
-            <HelpCenterIcon className="mr-2" /> How to Use ?
+            <HelpCenterIcon className="mr-4 ml-4" />How to Use ?
           </Typography>
         </div>
 

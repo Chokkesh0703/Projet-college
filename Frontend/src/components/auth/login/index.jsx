@@ -254,7 +254,7 @@ const LoginTabs = () => {
             </button>
             <button
               onClick={() => setActiveTab("facebook")}
-              className="px-4 py-2 bg-white text-black xfont-bold rounded transition duration-200 ease-in-out transform"
+              className="px-4 py-2 bg-black text-white font-bold rounded transition transform hover:scale-105"
             >
               Faculty Login
             </button>

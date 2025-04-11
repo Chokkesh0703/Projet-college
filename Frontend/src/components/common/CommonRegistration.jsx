@@ -7,6 +7,12 @@ import TextPressure from '../ui/TextPressure';
 import ScrollFloat from '../ui/ScrollFloat';
 import { useNavigate } from "react-router-dom";
 
+//instructions
+import InstructionStudents from '../instructions/InstructionStudents'
+import InstructionAdmin from '../instructions/InstructionAdmin'
+import InstructionFaculty from '../instructions/InstructionFaculty'
+import Footer from './Footer';
+
 const CommonRegistration = () => {
   const navigate = useNavigate();
   const handleStudent = () => {
@@ -35,12 +41,7 @@ const CommonRegistration = () => {
           minFontSize={36}
         />
       </div>
-      <div className="flex justify-center align-middle gap-12 h-screen">
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleStudent}>Student Login</button>
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleAdmin}>Admin Login</button>
-          <button className='bg-[#ffc13b] p-6 text-2xl rounded-full font-bold h-20' onClick={handleFaculty}>Faculty Login</button>
-      </div>
-      <div className="relative h-screen flex justify-center align-middle mt-12 font-bold text-2xl">
+      <div className="relative flex justify-center align-middle mt-12 font-bold text-2xl h-[40vh]">
         <ScrollFloat
           animationDuration={1}
           ease='back.inOut(2)'
@@ -51,6 +52,23 @@ const CommonRegistration = () => {
           Heres The Steps.
         </ScrollFloat>
       </div>
+      <div className="">
+        <div className="">
+          <InstructionStudents/>
+        </div>
+        <div className="">
+          <InstructionFaculty/>
+        </div>
+        <div className="">
+          <InstructionAdmin/>
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row justify-center align-middle gap-12 h-auto">
+        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleStudent}>Student Login</button>
+        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleAdmin}>Admin Login</button>
+        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleFaculty}>Faculty Login</button>
+      </div>
+      <Footer/>
     </div>
   )
 }
