@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterInstructions = () => {
-  const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
+  const handleStudent = () => {
+    navigate('/register')
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-[70vh] md:h-[60vh]">
@@ -20,17 +24,7 @@ const RegisterInstructions = () => {
             <li>Verify your details before submitting to avoid errors.</li>
           </ol>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-full"
-        >
-          Proceed to Registration
-        </button>
-        {showForm && (
-          <div className="mt-6">
-            <p className="text-green-600 font-semibold">Follow the instructions carefully while filling the form.</p>
-          </div>
-        )}
+        <button className='bg-[#ffc13b] pr-2 pl-2 font-bold text-[12px] md:text-[15px] rounded-full h-10' onClick={handleStudent}>Student Login</button>
       </div>
     </div>
   );

@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminRegisterInstructions = () => {
-  const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
+  const handleAdmin = () => {
+    navigate('/adminregister')
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-[70vh] md:h-[60vh]">
+    <div className="flex flex-col items-center justify-center h-[70vh] md:h-[60vh]">
       <div className="bg-white p-6 rounded-lg shadow-lg md:w-[50vw]">
         <h1 className="text-2xl font-bold mb-4 text-center">Admin Registration Guide</h1>
         <div className="mb-6">
@@ -21,19 +25,7 @@ const AdminRegisterInstructions = () => {
             If you face any issues, contact the support team at <strong>support@collegeadmin.com</strong>.
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 w-full"
-        >
-          Proceed to Registration Form
-        </button>
-        {showForm && (
-          <div className="mt-6">
-            <p className="text-green-600 font-semibold">
-              You&apos;re all set to complete the registration process. Make sure to follow the instructions!
-            </p>
-          </div>
-        )}
+        <button className='bg-[#ffc13b] pr-2 pl-2 text-[12px] md:text-[15px] rounded-full font-bold h-10' onClick={handleAdmin}>Admin Login</button>
       </div>
     </div>
   );

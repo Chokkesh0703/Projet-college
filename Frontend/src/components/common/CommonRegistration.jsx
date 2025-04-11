@@ -5,7 +5,6 @@ import Header from './Header';
 // React  UI
 import TextPressure from '../ui/TextPressure';
 import ScrollFloat from '../ui/ScrollFloat';
-import { useNavigate } from "react-router-dom";
 
 //instructions
 import InstructionStudents from '../instructions/InstructionStudents'
@@ -14,16 +13,6 @@ import InstructionFaculty from '../instructions/InstructionFaculty'
 import Footer from './Footer';
 
 const CommonRegistration = () => {
-  const navigate = useNavigate();
-  const handleStudent = () => {
-    navigate('/register')
-  }
-  const handleAdmin = () => {
-    navigate('/adminregister')
-  }
-  const handleFaculty = () => {
-    navigate('/facultyregister')
-  }
   return (
     <div>
       <Header />
@@ -54,21 +43,16 @@ const CommonRegistration = () => {
       </div>
       <div className="">
         <div className="">
-          <InstructionStudents/>
+          <InstructionStudents />
         </div>
         <div className="">
-          <InstructionFaculty/>
+          <InstructionFaculty />
         </div>
         <div className="">
-          <InstructionAdmin/>
+          <InstructionAdmin />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row justify-center align-middle gap-12 h-auto">
-        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleStudent}>Student Login</button>
-        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleAdmin}>Admin Login</button>
-        <button className='bg-[#ffc13b] p-6 text-[20px] md:text-2xl rounded-full font-bold h-20' onClick={handleFaculty}>Faculty Login</button>
-      </div>
-      <Footer/>
+      <Footer />
     </div>
   )
 }
