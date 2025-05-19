@@ -1,3 +1,4 @@
+// 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
@@ -25,6 +26,7 @@ const StudentHome = () => {
 
   useEffect(() => {
     fetchPosts();
+
     socket.on("postUpdated", (updatedPost) => {
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
@@ -33,7 +35,14 @@ const StudentHome = () => {
       );
     });
 
-    return () => socket.off("postUpdated");
+    socket.on("newPost", (newPost) => {
+      setPosts((prevPosts) => [newPost, ...prevPosts]); // prepend new post
+    });
+
+    return () => {
+      socket.off("postUpdated");
+      socket.off("newPost");
+    };
   }, []);
 
   const fetchPosts = async () => {
@@ -96,7 +105,7 @@ const StudentHome = () => {
         { userId, text: commentText[postId] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Ensure proper state update
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
       console.error(
         "Error adding comment:",
@@ -105,6 +114,7 @@ const StudentHome = () => {
       alert("Failed to add comment. Please try again.");
     }
   };
+
   // delete comment
   const handleDeleteComment = async (postId, commentId) => {
     const userId = sessionStorage.getItem("userId");
@@ -116,8 +126,8 @@ const StudentHome = () => {
       await axios.delete(
         `${API_BASE_URL}/api/posts/comment/${postId}/${commentId}`,
         {
-          data: { userId, Role }, //  Move data outside headers
-          headers: { Authorization: `Bearer ${token}` }, //  Only token in headers
+          data: { userId, Role },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       // Update posts state directly to remove the comment
@@ -144,7 +154,7 @@ const StudentHome = () => {
   return (
     <div className="w-full relative">
       {/* <Header/> */}
-      <img src={bgForChat} alt="Banner" className="absolute bg-repeat  w-full"/>
+      <img src={bgForChat} alt="Banner" className="absolute bg-repeat  w-full" />
       <div className="relative max-h-svh">
         <div className="container mx-auto p-4 max-w-3xl">
           <nav className="">
@@ -300,12 +310,12 @@ const StudentHome = () => {
         </div>
       </div>
       <div className=" sticky mr-6 w-15 bottom-0 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
-          <BsFilterCircle
-            size={30}
-            className="text-white"
-            onClick={() => navigate("/Chatroom")}
-          />
-        </div>
+        <BsFilterCircle
+          size={30}
+          className="text-white"
+          onClick={() => navigate("/Chatroom")}
+        />
+      </div>
     </div>
   );
 };

@@ -28,10 +28,10 @@ const Studentchatroom = () => {
       setChat(messages);
     });
 
-    // // Handle incoming messages
-    // socket.on("receive_message", (newMessage) => {
-    //   setChat((prev) => [...prev, newMessage]);
-    // });
+    // Handle incoming messages
+    socket.on("receive_message", (newMessage) => {
+      setChat((prev) => [...prev, newMessage]);
+    });
 
     // Cleanup when the component unmounts or chatroom changes
     return () => {
