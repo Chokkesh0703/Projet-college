@@ -37,7 +37,7 @@ const StudentDetails = () => {
         try {
             console.log('Student ID:', studentId);
             const response = await axios.post(
-                'http://localhost:8000/api/chat/create',
+                'http://localhost:8000/api/chats/create',
                 { studentId },
                 { headers: { Authorization: `Bearer ${userToken}` } } // Pass the token here
             );
