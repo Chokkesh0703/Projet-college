@@ -65,7 +65,7 @@ app.use("/api", approverouter);
 app.use("/api/posts", postRoutes);
 app.use("/api/chats", Studentchatroomroutes);
 app.use("/api/me", profilerouter);
-app.use("/api/auth", authRoutes);
+app.use("/api/login", authRoutes);
 app.use("/api/users", userRoutes);
 
 // Test Route

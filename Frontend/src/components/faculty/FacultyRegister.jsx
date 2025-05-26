@@ -46,7 +46,7 @@ const FacultyRegister = () => {
     if (!validateForm()) return;
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/register`, formData);
+      const res = await axios.post(`${API_BASE_URL}/api/login/register`, formData);
 
       if (res.data === "exist") {
         alert("Already registered!");

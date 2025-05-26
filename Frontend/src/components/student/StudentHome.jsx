@@ -7,12 +7,11 @@ import { MdCancel } from "react-icons/md";
 import { BsFilterCircle } from "react-icons/bs";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-// import BgStudent3 from '../../assets/ChatDoodle3.png'
-// import AdminScenary from '../../assets/AdminScenary.png'
+
 import bgForChat from "../../assets/ChatDoodle3.png";
 import Header from "../common/Header";
 import InHeader from "../common/InHeader";
-// import Header from "../common/Header";
+
 
 const API_BASE_URL = "http://localhost:8000";
 const socket = io(API_BASE_URL);

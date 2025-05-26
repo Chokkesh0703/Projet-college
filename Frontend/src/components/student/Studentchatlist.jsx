@@ -23,7 +23,7 @@ const StudentChatlist = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:8000/api/chat/student/${studentId}`);
+      const response = await axios.get(`http://localhost:8000/api/chats/student/${studentId}`);
       setChatrooms(response.data.chatrooms);
       setLoading(false);
     } catch (error) {
