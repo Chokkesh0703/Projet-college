@@ -42,6 +42,19 @@ const InHeader = () => {
       </div>
     );
   }
+  if (!profile) {
+    return (
+      <div className="text-center py-10">
+        <p className="mb-4">You haven&apos;t created a profile yet.</p>
+        <button
+          onClick={() => navigate("/ProfileFrom")}
+          className="p-3 rounded-full mr-3 bg-white"
+        >
+          Create Your Profile
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className='flex justify-between items-center bg-yellow-400 p-4 relative w-full top-0 z-50 shadow-md
