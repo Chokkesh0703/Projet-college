@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 // import BgStudent3 from '../../assets/ChatDoodle3.png'
 // import AdminScenary from '../../assets/AdminScenary.png'
 import bgForChat from "../../assets/ChatDoodle3.png";
+import Header from "../common/Header";
+import InHeader from "../common/InHeader";
 // import Header from "../common/Header";
 
 const API_BASE_URL = "http://localhost:8000";
@@ -72,11 +74,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-                ...post,
-                likes: post.likes.includes(userId)
-                  ? post.likes.filter((id) => id !== userId)
-                  : [...post.likes, userId],
-              }
+              ...post,
+              likes: post.likes.includes(userId)
+                ? post.likes.filter((id) => id !== userId)
+                : [...post.likes, userId],
+            }
             : post
         )
       );
@@ -135,11 +137,11 @@ const StudentHome = () => {
         prevPosts.map((post) =>
           post._id === postId
             ? {
-                ...post,
-                comments: post.comments.filter(
-                  (comment) => comment._id !== commentId
-                ),
-              }
+              ...post,
+              comments: post.comments.filter(
+                (comment) => comment._id !== commentId
+              ),
+            }
             : post
         )
       );
@@ -151,9 +153,12 @@ const StudentHome = () => {
     }
   };
 
+  // const userId = '123'
+
   return (
     <div className="w-full relative">
       {/* <Header/> */}
+      <InHeader />
       <img src={bgForChat} alt="Banner" className="absolute bg-repeat  w-full" />
       <div className="relative max-h-svh">
         <div className="container mx-auto p-4 max-w-3xl">

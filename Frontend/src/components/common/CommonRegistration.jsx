@@ -16,7 +16,7 @@ const CommonRegistration = () => {
   return (
     <div>
       <Header />
-      <div className='relative h-1/2 m-12'>
+      {/* <div className='relative h-1/2 m-12'>
         <TextPressure
           text="Hello!"
           flex={true}
@@ -27,9 +27,9 @@ const CommonRegistration = () => {
           italic={true}
           textColor="black"
           strokeColor="#ff0000"
-          minFontSize={36}
+          minFontSize={24}
         />
-      </div>
+      </div> */}
       <div className="relative flex justify-center align-middle mt-12 font-bold text-2xl h-[40vh]">
         <ScrollFloat
           animationDuration={1}

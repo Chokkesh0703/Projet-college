@@ -21,6 +21,7 @@ import setupSocket from "./routes/socket.js";
 import setupChatroomRoutes from "./routes/chatroom.js";
 import Facultychatroomrouter from "./routes/facultychatroomroute.js";
 import Studentchatroomroutes from "./routes/studentchatroomroutes.js";
+import profilerouter from "./routes/profileRoutes.js";
 
 dotenv.config();
 
@@ -50,7 +51,8 @@ app.use("/api/faculty", facultyRouter);
 app.use("/api", approverouter);
 app.use("/api/posts", postsRoutes);
 app.use("/api/chat", Facultychatroomrouter);
-app.use("/api/chats", Studentchatroomroutes)
+app.use("/api/chats", Studentchatroomroutes);
+app.use("/api/me", profilerouter)
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");

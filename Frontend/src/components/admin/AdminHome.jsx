@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { FaSignOutAlt, FaEnvelope, FaNewspaper } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import Header from "../common/Header";
+import { useAuth } from "../../context/AuthContext"; 
 import Footer from "../common/Footer";
 
 // import BgAdmin from '../../assets/BgAdmin.png'
@@ -28,8 +27,8 @@ const AdminHome = () => {
     <div className="bg-cover bg-no-repeat" style={{
       // backgroundImage:`url(${BgAdmin2})`
     }}>
-
-      <Header />
+      {/* <LoggedInHeader /> */}
+      {/* <UserHeader/> */}
       <div className="container mx-auto mt-40 p-6 bg-white shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Sivananda Sarma Memorial RV College</h2>
         <p className="text-gray-700 leading-relaxed mb-4">The nucleus of holistic education since 1991. With ‘360-degree Education for Wholeness’ as our foundation, we started out in 1984 to empower passionate students in the fields of commerce, business administration, and computer applications.</p>
