@@ -93,10 +93,11 @@ const Chatroom = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('userToken');
+        const token = sessionStorage.getItem('userToken');
         const res = await axios.get('http://localhost:8000/api/me/profile', {
           headers: {
-            'x-auth-token': token
+            'x-auth-token': token,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           }
         });
         setProfile(res.data);
@@ -148,7 +149,7 @@ const Chatroom = () => {
               <a aria-describedby={id} onClick={handleClick} className="text-sm font-semibold cursor-pointer">
                 {msg.sender === userId ? "You" : msg.sender.name}
               </a>
-              <Popover
+              {/* <Popover
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
@@ -163,7 +164,7 @@ const Chatroom = () => {
                   {profile.email} <br />
                   {profile.role}
                 </Typography>
-              </Popover>
+              </Popover> */}
               <p>{msg.text}</p>
             </div>
           ))

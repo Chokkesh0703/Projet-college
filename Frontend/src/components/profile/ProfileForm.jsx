@@ -28,7 +28,8 @@ const ProfileForm = () => {
                 const token = sessionStorage.getItem('userToken'); // Already using sessionStorage
                 const res = await axios.get('http://localhost:8000/api/me/profile', {
                     headers: {
-                        'x-auth-token': token
+                        'x-auth-token': token,
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                     }
                 });
 

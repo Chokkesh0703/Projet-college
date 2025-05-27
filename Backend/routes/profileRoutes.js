@@ -1,12 +1,12 @@
 import express from "express";
 import Profile from "../models/Profile.js";
 import User from "../models/User.js";
-import authMiddleware from "../middleware/auth.js"; // You'll need to create this
+import authenticate from "../middleware/authenticate.js";
 
 const profilerouter = express.Router();
 
 // Middleware to protect routes
-profilerouter.use(authMiddleware);
+profilerouter.use(authenticate);
 
 // @route   GET /api/me/profile
 // @desc    Get current user's profile
@@ -14,11 +14,11 @@ profilerouter.use(authMiddleware);
 profilerouter.get('/profile', async (req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'email', 'role']);
-        
+
         if (!profile) {
             return res.status(404).json({ msg: 'Profile not found' });
         }
-        
+
         res.json(profile);
     } catch (err) {
         console.error(err.message);
@@ -149,7 +149,7 @@ profilerouter.delete('/profile', async (req, res) => {
         await Profile.findOneAndRemove({ user: req.user.id });
         // Remove user
         await User.findOneAndRemove({ _id: req.user.id });
-        
+
         res.json({ msg: 'User deleted' });
     } catch (err) {
         console.error(err.message);

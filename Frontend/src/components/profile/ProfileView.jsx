@@ -34,7 +34,8 @@ const ProfileView = () => {
                 const token = sessionStorage.getItem('userToken'); // Changed to sessionStorage
                 const res = await axios.get('http://localhost:8000/api/me/profile', {
                     headers: {
-                        'x-auth-token': token
+                        'x-auth-token': token,
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                     }
                 });
                 setProfile(res.data);
