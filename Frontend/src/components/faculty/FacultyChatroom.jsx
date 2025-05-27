@@ -66,7 +66,7 @@ const FacultyChatroom = () => {
   const markMessagesAsRead = async () => {
     // API call to mark messages as read in the backend
     try {
-      await fetch("http://localhost:8000/api/chat/mark_as_read", {
+      await fetch("http://localhost:8000/api/chats/mark_as_read", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

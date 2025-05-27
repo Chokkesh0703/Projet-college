@@ -59,8 +59,8 @@ const AppRoutes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/help" element={<HowToUse />} />
       {/* Profile Routes */}
-      <Route path="/ProfileView" element={<ProfileView />} />
-      <Route path="/ProfileFrom" element={<ProfileForm />} />
+      <Route path="/ProfileView" element={<StudentRoute><ProfileView /></StudentRoute>} />
+      <Route path="/ProfileFrom" element={<StudentRoute><ProfileForm /></StudentRoute>} />
 
       {/* Protected Routes */}
       <Route path="/StudentHome" element={<StudentRoute><RouteWrapper><StudentHome user={user} /></RouteWrapper></StudentRoute>} />

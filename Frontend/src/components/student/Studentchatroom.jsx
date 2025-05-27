@@ -67,7 +67,7 @@ const Studentchatroom = () => {
   // Mark messages as read when opening chat
   const markMessagesAsRead = async () => {
     try {
-      await fetch("http://localhost:8000/api/chat/mark_as_read", {
+      await fetch("http://localhost:8000/api/chats/mark_as_read", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
