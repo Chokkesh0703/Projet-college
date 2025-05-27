@@ -8,10 +8,30 @@ const ProfileView = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    // useEffect(() => {
+    //     const fetchProfile = async () => {
+    //         try {
+    //             const token = localStorage.getItem('userToken');
+    //             const res = await axios.get('http://localhost:8000/api/me/profile', {
+    //                 headers: {
+    //                     'x-auth-token': token
+    //                 }
+    //             });
+    //             setProfile(res.data);
+    //         } catch (err) {
+    //             console.error('Error fetching profile:', err);
+    //             setError('Failed to load profile. Please try again later.');
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchProfile();
+    // }, []);
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('userToken');
+                const token = sessionStorage.getItem('userToken'); // Changed to sessionStorage
                 const res = await axios.get('http://localhost:8000/api/me/profile', {
                     headers: {
                         'x-auth-token': token

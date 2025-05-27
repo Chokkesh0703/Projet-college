@@ -25,7 +25,7 @@ const ProfileForm = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('userToken');
+                const token = sessionStorage.getItem('userToken'); // Already using sessionStorage
                 const res = await axios.get('http://localhost:8000/api/me/profile', {
                     headers: {
                         'x-auth-token': token
@@ -42,12 +42,10 @@ const ProfileForm = () => {
                 }
             } catch (err) {
                 console.error('Error fetching profile:', err);
-                // If profile doesn't exist, we'll start with empty form
             } finally {
                 setLoading(false);
             }
         };
-
         fetchProfile();
     }, []);
 
