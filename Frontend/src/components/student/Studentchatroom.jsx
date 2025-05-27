@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { useLocation } from "react-router-dom";
 
-// Initialize socket once using useRef
+// Initialize socket once
 const socket = io("http://localhost:8000");
 
 const Studentchatroom = () => {
@@ -40,7 +40,7 @@ const Studentchatroom = () => {
     socket.on("load_previous_messages", handlePreviousMessages);
     socket.on("receive_message", handleNewMessage);
 
-    // Cleanup listeners when component unmounts or chatroom changes
+    // Cleanup on unmount
     return () => {
       socket.emit("leave_room", chatroom._id);
       socket.off("load_previous_messages", handlePreviousMessages);
@@ -53,18 +53,17 @@ const Studentchatroom = () => {
       const chatMessage = {
         chatroomId: chatroom._id,
         sendername: user,
-        senderId: userId,
+        sender: userId,
         message: message.trim(),
         timestamp: new Date().toISOString(),
       };
 
-      // Emit to server
       socket.emit("send_message", chatMessage);
-      setMessage("");
+      setMessage(""); // Clear input after sending");
     }
   };
 
-  // Mark messages as read when opening chat
+  // Mark all messages as read
   const markMessagesAsRead = async () => {
     try {
       await fetch("http://localhost:8000/api/chats/mark_as_read", {
@@ -89,7 +88,7 @@ const Studentchatroom = () => {
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">
-        Chat with {chatroom?.student?.name || "Faculty"}
+        Chat with {chatroom.student.name || "Faculty"}
       </h2>
 
       {/* Chat Messages */}
@@ -97,27 +96,42 @@ const Studentchatroom = () => {
         {chat.length === 0 ? (
           <p className="text-gray-500">No messages yet</p>
         ) : (
-          chat.map((chatItem, index) => (
-            <div
-              key={index}
-              className={`p-2 mb-2 rounded-lg max-w-xs ${
-                chatItem.senderId === userId
-                  ? "bg-blue-200 ml-auto text-right"
-                  : "bg-gray-200 mr-auto text-left"
-              }`}
-            >
-              <div className="font-semibold text-sm mb-1">
-                {chatItem.senderId === userId ? "You" : chatItem.sendername}
+          chat.map((chatItem, index) => {
+            const isCurrentUser = chatItem.sender === userId;
+            const alignmentClass = isCurrentUser
+              ? "ml-auto text-right"
+              : "mr-auto text-left";
+            const readStatusClass = chatItem.isRead
+              ? isCurrentUser
+                ? "bg-blue-200"
+                : "bg-gray-200"
+              : isCurrentUser
+              ? "bg-blue-400"
+              : "bg-gray-400";
+
+            return (
+              <div
+                key={index}
+                className={`p-2 mb-2 rounded-lg max-w-xs ${readStatusClass} ${alignmentClass}`}
+              >
+                <div className="font-semibold text-sm mb-1">
+                  {isCurrentUser ? "You" : chatItem.sendname}
+                </div>
+                <div>{chatItem.message}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {chatItem.timestamp &&
+                  !isNaN(new Date(chatItem.timestamp)) ? (
+                    new Date(chatItem.timestamp).toLocaleString("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
+                  ) : (
+                    "Just now"
+                  )}
+                </div>
               </div>
-              <div>{chatItem.message}</div>
-              <div className="text-xs text-gray-500 mt-1">
-                {new Date(chatItem.timestamp).toLocaleString("en-US", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={chatEndRef} />
       </div>

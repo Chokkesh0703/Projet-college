@@ -36,6 +36,7 @@ const StudentDetails = () => {
     }
 
     try {
+      console.log('Creating chatroom for student ID:', studentId);
       const response = await axios.post(
         'http://localhost:8000/api/chats/create',
         { studentId },

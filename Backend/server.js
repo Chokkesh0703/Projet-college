@@ -143,13 +143,13 @@ io.on("connection", (socket) => {
   });
 
   // --- Send 1:1 Chat Message ---
-  socket.on("send_message", async ({ chatroomId, senderId, message, sendername }) => {
+  socket.on("send_message", async ({ chatroomId, sender, message, sendername }) => {
     try {
       const chatroom = await Chats.findById(chatroomId);
       if (chatroom) {
-        chatroom.messages.push({ sender: senderId, message, sendname: sendername });
+        chatroom.messages.push({ sender: sender, message, sendname: sendername });
         await chatroom.save();
-        io.to(chatroomId).emit("receive_message", { senderId, message, sendername });
+        io.to(chatroomId).emit("receive_message", { sender, message, sendername });
       }
     } catch (error) {
       console.error("Error sending message:", error);

@@ -1,32 +1,67 @@
 import Chats from '../models/Chat.js';
 import mongoose from 'mongoose';
 
-// Create a new chatroom
+// Create a new chatroom (only one per student-faculty pair)
 export const createChatroom = async (req, res) => {
   const { studentId } = req.body;
 
+  // Validate input
   if (!studentId) {
     return res.status(400).json({ success: false, message: 'Student ID is required' });
   }
 
   try {
-    let chatroom = await Chats.findOne({ student: req.user.id, faculty: studentId });
+    console.log(req.user.id, req.user.role, studentId);
+    // Check if chatroom already exists between these two users
+    const existingChatroom = await Chats.findOne({
+      $or: [
+        { student: req.user.id, faculty: studentId },
+        { student: studentId, faculty: req.user.id },
+      ],
+    });
 
-    if (chatroom) {
-      return res.status(200).json({ success: true, chatroom, message: 'Chatroom already exists' });
+    if (existingChatroom) {
+      return res.status(200).json({
+        success: true,
+        chatroom: existingChatroom,
+        message: 'Chatroom already exists',
+      });
     }
 
-    chatroom = new Chats({ student: req.user.id, faculty: studentId });
-    await chatroom.save();
+    // Determine who is student and who is faculty
+    let student, faculty;
 
-    res.status(201).json({ success: true, chatroom, message: 'Chatroom created successfully' });
+    if (req.user.role === 'faculty') {
+      faculty = req.user.id;
+      student = studentId;
+    } else if (req.user.role === 'student') {
+      student = req.user.id;
+      faculty = studentId;
+    } else {
+      return res.status(403).json({ success: false, message: 'Invalid user role' });
+    }
+
+    // Create and save new chatroom
+    const newChatroom = new Chats({ student, faculty });
+    await newChatroom.save();
+
+    return res.status(201).json({
+      success: true,
+      chatroom: newChatroom,
+      message: 'Chatroom created successfully',
+    });
   } catch (error) {
     console.error('Error creating chatroom:', error);
-    return res.status(500).json({ success: false, message: 'Server Error' });
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+      error: error.message,
+    });
   }
 };
 
-// Fetch all chatrooms for a faculty
+
+// Get all chatrooms for a faculty
 export const getAllChatroomsForFaculty = async (req, res) => {
   const { facultyId } = req.params;
 
@@ -46,7 +81,7 @@ export const getAllChatroomsForFaculty = async (req, res) => {
   }
 };
 
-// Fetch all chatrooms for a student
+// Get all chatrooms for a student
 export const getAllChatroomsForStudent = async (req, res) => {
   const { studentId } = req.params;
 
@@ -68,9 +103,9 @@ export const getAllChatroomsForStudent = async (req, res) => {
 
 // Send a message in chatroom
 export const sendMessage = async (req, res) => {
-  const { chatroomId, message, senderId, sendername } = req.body;
+  const { chatroomId, message, sender, sendername } = req.body;
 
-  if (!chatroomId || !message || !senderId) {
+  if (!chatroomId || !message || !sender) {
     return res.status(400).json({ success: false, message: 'Chatroom ID, message, and sender ID are required' });
   }
 
@@ -81,15 +116,16 @@ export const sendMessage = async (req, res) => {
     }
 
     const newMessage = {
-      sender: senderId,
+      sender,
       message,
       sendname: sendername,
-      timestamp: new Date()
+      timestamp: new Date(),
+      isRead: false,
     };
 
     chatroom.messages.push(newMessage);
 
-    if (senderId.toString() === chatroom.faculty.toString()) {
+    if (sender.toString() === chatroom.faculty.toString()) {
       chatroom.studentUnreadCount += 1;
     } else {
       chatroom.facultyUnreadCount += 1;
@@ -106,7 +142,7 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-// Mark messages as read
+// Mark all messages as read
 export const markMessagesAsRead = async (req, res) => {
   const { chatroomId } = req.body;
 
@@ -126,7 +162,8 @@ export const markMessagesAsRead = async (req, res) => {
       chatroom.studentUnreadCount = 0;
     }
 
-    chatroom.messages.forEach((msg) => {
+    // Mark messages sent by the opposite party as read
+    chatroom.messages.forEach(msg => {
       if (msg.sender.toString() !== req.user.id.toString()) {
         msg.isRead = true;
       }
