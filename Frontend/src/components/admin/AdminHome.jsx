@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { FaSignOutAlt, FaEnvelope, FaNewspaper } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import Header from "../common/Header";
+import InHeader from "../common/InHeader";
 import InFooter from "../common/InFooter"
 
 import PropTypes from 'prop-types';
@@ -70,7 +69,7 @@ const AdminHome = () => {
     <div className="bg-cover bg-no-repeat" style={{
       // backgroundImage:`url(${BgAdmin2})`
     }}>
-      {/* <Header /> */}
+      <InHeader />
       <Box sx={{ width: '100%' }}>
         <Box sx={{
           borderBottom: 1,

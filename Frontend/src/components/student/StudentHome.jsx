@@ -151,8 +151,6 @@ const StudentHome = () => {
     }
   };
 
-  // const userId = '123'
-
   return (
     <div className="w-full relative">
       <img src={bgForChat} alt="Banner" className="absolute bg-repeat w-full" />
@@ -161,11 +159,6 @@ const StudentHome = () => {
           <div className="rounded-2xl p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
             <h1 className="text-xl font-semibold text-white">Announcements</h1>
           </div>
-          {/* <nav className="bg-[#08415C] p-2 sm:p-4 rounded-lg md:rounded-3xl flex justify-center items-center">
-            <p className="text-xl font-semibold text-white">
-              Announcements
-            </p>
-          </nav> */}
           <div className="mt-6 space-y-4">
             {posts.length === 0 ? (
               <p className="text-center text-gray-500">No posts available.</p>

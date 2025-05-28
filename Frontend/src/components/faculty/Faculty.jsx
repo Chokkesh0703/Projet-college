@@ -51,7 +51,7 @@ export default function BasicTabs() {
 
     return (
         <div className="">
-            {/* <Header /> */}
+            <InHeader />
             <Box sx={{ width: '100%' }}>
                 <Box sx={{
                     borderBottom: 1,

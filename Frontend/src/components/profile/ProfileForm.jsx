@@ -120,7 +120,7 @@ const ProfileForm = () => {
             });
 
             alert('Profile saved successfully!');
-            navigate('/StudentHome'); // Or wherever you want to redirect
+            navigate(-1); // Or wherever you want to redirect
         } catch (err) {
             console.error('Error saving profile:', err);
             alert('Failed to save profile');
