@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { TextField } from '@mui/material';
 
 const StudentChatlist = () => {
   const [chatrooms, setChatrooms] = useState([]);
@@ -50,12 +51,17 @@ const StudentChatlist = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Available Chatrooms</h1>
-
+    <div className="container w-screen">
+      <div className="p-4 text-black text-lg flex justify-between items-center w-screen" style={{ backgroundColor: '#08415C' }}>
+        <h1 className="text-xl font-semibold text-white">Available Chatrooms</h1>
+      </div>
+      {/* <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
+        <h1 className="text-2xl font-bold mb-4 text-white">Available Chatrooms</h1>
+      </div> */}
       {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <input
+      <div className="px-10 flex flex-col md:flex-row gap-4 mb-6 mt-12">
+        <TextField
+          variant='filled'
           type="text"
           placeholder="Search by faculty name or email..."
           value={searchTerm}
@@ -74,7 +80,7 @@ const StudentChatlist = () => {
       </div>
 
       {/* Chatroom Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredChatrooms.length === 0 ? (
           <p className="text-gray-500">No chatrooms match your search/filter.</p>
         ) : (

@@ -3,35 +3,38 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  Container,
-  Paper,
-  Typography,
   Box,
-  Grid,
-  TextField,
   Button,
-  Divider,
+  Container,
   FormControl,
+  Grid,
   InputLabel,
+  MenuItem,
   Select,
-  MenuItem
-} from "@mui/material";
+  TextField,
+  Typography,
+  Paper,
+  Divider
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import InFooter from "../common/InFooter"
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+
 
 const API_BASE_URL = "http://localhost:8000";
 
-const FacultyRegister = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     course: "",
     collegeid: "",
+    unid: "",
+    yearofpass: "",
     email: "",
     phoneno: "",
     Password: "",
-    role: "faculty", // Default role selection
+    role: "student", // Default role selection
   });
 
   const [registered, setRegistered] = useState(false);
@@ -80,14 +83,14 @@ const FacultyRegister = () => {
     }
   };
   return (
-    <div className="">
+    <div className="h-screen relative">
       <Header />
-      <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+      <Container component="main" maxWidth="md" sx={{ py: 4, height:'100%',margin:'' }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
           {!registered ? (
             <>
               <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
-                Faculty Registration
+                Student Registration
               </Typography>
               <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
                 Please fill in your details to create an account
@@ -162,9 +165,8 @@ const FacultyRegister = () => {
                     <TextField
                       required
                       fullWidth
-                      label="Department"
+                      label="Course/Designation"
                       name="course"
-                      placeholder="Example: BCA, BBA, B.COM"
                       onChange={handleChange}
                     />
                   </Grid>
@@ -180,6 +182,27 @@ const FacultyRegister = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="University Register Number"
+                      name="unid"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="Year of Passout"
+                      name="yearofpass"
+                      type="number"
+                      onChange={handleChange}
+                      inputProps={{ min: 2000, max: 2099 }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel>Role</InputLabel>
                       <Select
@@ -188,7 +211,7 @@ const FacultyRegister = () => {
                         label="Role"
                         onChange={handleChange}
                       >
-                        <MenuItem value="faculty">Faculty</MenuItem>
+                        <MenuItem value="student">Student</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -228,28 +251,31 @@ const FacultyRegister = () => {
           )}
         </Paper>
       </Container>
-      <Footer/>
+      <InFooter/>
     </div>
   );
+
   // return (
   //   <div className="flex flex-col items-center justify-center min-h-screen" style={{
   //     backgroundColor: '#f5f0e1',
   //   }}>
   //     <div className="bg-white p-6 rounded-lg shadow-md w-96">
-  //       <h1 className="text-2xl font-bold mb-4 text-center">Faculty Registration</h1>
+  //       <h1 className="text-2xl font-bold mb-4 text-center">Student Registration</h1>
 
   //       {!registered ? (
   //         <form onSubmit={submit} className="flex flex-col gap-3">
   //           <input type="text" name="name" placeholder="Name" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="text" name="course" placeholder="Department, Example : BCA, BBA, B.COM" onChange={handleChange} className="p-2 border rounded" required />
+  //           <input type="text" name="course" placeholder="Course/designation" onChange={handleChange} className="p-2 border rounded" required />
   //           <input type="text" name="collegeid" placeholder="College ID" onChange={handleChange} className="p-2 border rounded" required />
+  //           <input type="text" name="unid" placeholder="University Register Number" onChange={handleChange} className="p-2 border rounded" />
+  //           <input type="number" name="yearofpass" placeholder="Year of Passout" onChange={handleChange} className="p-2 border rounded" required />
   //           <input type="email" name="email" placeholder="Email" onChange={handleChange} className="p-2 border rounded" required />
   //           <input type="text" name="phoneno" placeholder="Phone Number" onChange={handleChange} className="p-2 border rounded" required />
   //           <input type="password" name="Password" placeholder="Password" onChange={handleChange} className="p-2 border rounded" required />
 
   //           {/* Role Selection Dropdown */}
   //           <select name="role" value={formData.role} onChange={handleChange} className="p-2 border rounded">
-  //             <option value="faculty">Faculty</option>
+  //             <option value="student">Student</option>
   //             {/* <option value="admin">Admin</option> */}
   //           </select>
 
@@ -274,4 +300,4 @@ const FacultyRegister = () => {
   // );
 };
 
-export default FacultyRegister;
+export default Register;

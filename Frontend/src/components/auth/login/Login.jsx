@@ -1,14 +1,14 @@
 import Header from "@/components/common/Header";
 import LoginTabs from "@/components/auth/login/index";
 import React from "react";
-import Footer from "@/components/common/Footer";
+import InFooter from "../../common/InFooter"
 
 function Login() {
   return (
     <div className="w-full">
       <Header />
       <LoginTabs />
-      <Footer />
+      <InFooter/>
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
 import banner from "../../../assets/banner.png";
+import { TextField } from "@mui/material";
+import { Button } from "material";
 
 // Simple Login components for email, Google, and Facebook (for illustration purposes)
 const StudentLogin = () => {
@@ -29,7 +31,7 @@ const StudentLogin = () => {
         sessionStorage.setItem("course", res.data.course);
         sessionStorage.setItem("yearofpass", res.data.yearofpass);
         localStorage.setItem('userToken', res.data.token);
-        navigate("/StudentHome");
+        navigate("/Student");
       } else {
         alert("Invalid credentials! Please try again.");
       }
@@ -46,25 +48,29 @@ const StudentLogin = () => {
           Student Login
         </h2>
         <form onSubmit={handleStudentLogin} className="space-y-4">
-          <input
+          <TextField
+            variant="filled"
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            className="mt-6 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"            
+            style={{margin:"8px 0 8px 0"}}
             required
           />
-          <input
+          <TextField
+            variant="filled"
             type="password"
             placeholder="Password"
             value={studentPassword}
             onChange={(e) => setStudentPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+            className="mt-6 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"            
+            style={{margin:"8px 0 8px 0"}}
             required
           />
           <button
             type="submit"
-            className="w-full text-white font-semibold py-2 rounded-lg transition"
+            className="w-full text-white font-semibold py-4 rounded-lg transition"
             style={{
               backgroundColor: "#ffc13b",
               color: "black",
@@ -117,25 +123,29 @@ const AdminLogin = () => {
           Admin Login
         </h2>
         <form onSubmit={handleAdminLogin} className="space-y-4">
-          <input
+          <TextField
+            variant="filled"
             type="text"
             placeholder="Admin ID"
             value={adminId}
             onChange={(e) => setAdminId(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            style={{margin:'8px 0 8px 0'}}
             required
           />
-          <input
+          <TextField
+            variant="filled"
             type="password"
             placeholder="Password"
             value={adminPassword}
             onChange={(e) => setadminPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            style={{margin:'8px 0 8px 0'}}
             required
           />
           <button
             type="submit"
-            className="w-full text-white font-semibold py-2 rounded-lg transition"
+            className="w-full text-white font-semibold py-4 rounded-lg transition"
             style={{
               backgroundColor: "#ffc13b",
               color: "black",
@@ -171,7 +181,7 @@ const FacultyLogin = () => {
         sessionStorage.setItem("role", res.data.role);
         sessionStorage.setItem("user", res.data.name);
         localStorage.setItem('userToken', res.data.token);
-        navigate("/FacultyHome");
+        navigate("/Faculty");
       } else {
         alert("Invalid Faculty ID or Password.");
       }
@@ -187,25 +197,29 @@ const FacultyLogin = () => {
           Faculty Login
         </h2>
         <form onSubmit={handleAdminLogin} className="space-y-4">
-          <input
+          <TextField
+            variant="filled"
             type="text"
             placeholder="Faculty ID"
             value={adminId}
             onChange={(e) => setAdminId(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            style={{margin:"8px 0 8px 0"}}
             required
           />
-          <input
+          <TextField
+            variant="filled"
             type="password"
             placeholder="Password"
             value={adminPassword}
             onChange={(e) => setadminPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            style={{margin:"8px 0 8px 0"}}
             required
           />
           <button
             type="submit"
-            className="w-full text-white font-semibold py-2 rounded-lg transition"
+            className="w-full text-white font-semibold py-4 rounded-lg transition"
             style={{
               backgroundColor: "#ffc13b",
               color: "black",
@@ -267,10 +281,11 @@ const LoginTabs = () => {
             {activeTab === "facebook" && <FacultyLogin />}
           </div>
           {/* Register Button */}
-          <div className="flex justify-center align-middle gap-4">
+          <div className="flex justify-center items-center align-middle gap-4">
+            <p className="mt-4 bg-black text-white font-semibold py-2 px-6 rounded-lg transition">Don&apos;t Have an Account ? </p>
             <button
               onClick={() => navigate("/commomRegistrations")}
-              className="mt-4 bg-white text-black font-semibold py-2 px-6 rounded-lg transition"
+              className="mt-4 bg-yellow-400 text-black font-semibold py-2 px-6 rounded-lg transition"
             >
               Sign In
             </button>

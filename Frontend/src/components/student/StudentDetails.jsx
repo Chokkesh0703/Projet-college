@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
+import { FaSignOutAlt } from 'react-icons/fa';
+import { TextField } from '@mui/material';
 
 const StudentDetails = () => {
   const [students, setStudents] = useState([]);
@@ -10,6 +12,8 @@ const StudentDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCourse, setFilterCourse] = useState('All');
   const [filterYear, setFilterYear] = useState('All');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const userToken = sessionStorage.getItem('token');
@@ -76,11 +80,21 @@ const StudentDetails = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-3xl mb-4">Student Request</h1>
+      <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
+        <h1 className="text-xl font-semibold text-white">Students Chatroom</h1>
+        <button
+          onClick={() => setShowLogoutConfirm(true)}
+          className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
+        >
+          <FaSignOutAlt className="text-xl" />
+          <span className="hidden lg:inline">Logout</span>
+        </button>
+      </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <input
+      <div className="flex flex-col md:flex-row gap-4 mb-6 px-3 py-3 my-3 mx-3">
+        <TextField
+          variant='filled'
           type="text"
           placeholder="Search by name, email, course, or year..."
           value={searchTerm}
@@ -114,7 +128,7 @@ const StudentDetails = () => {
       </div>
 
       {/* Student Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-3 py-3 my-3 mx-3">
         {filteredStudents.length === 0 ? (
           <p className="text-gray-500">No students found.</p>
         ) : (
@@ -132,7 +146,7 @@ const StudentDetails = () => {
               </CardContent>
               <Button
                 onClick={() => handleCreateChat(student._id)}
-                className="mt-2 bg-blue-500 text-white"
+                className="mt-2 bg-yellow-400 text-zinc-950"
               >
                 Start Chat
               </Button>
@@ -140,6 +154,47 @@ const StudentDetails = () => {
           ))
         )}
       </div>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-yellow-400 p-4 shadow-md">
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={() => {
+                setShowLogoutConfirm(true);
+                setMobileMenuOpen(false);
+              }}
+              className="w-full px-4 py-2 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
+            >
+              <FaSignOutAlt className="text-xl" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-11/12 sm:w-auto">
+            <h3 className="text-xl font-bold mb-4">Confirm Logout</h3>
+            <p className="mb-6">Are you sure you want to logout?</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="px-4 py-2 bg-[#ffc13b] rounded hover:bg-[#e6ac35] transition-colors"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

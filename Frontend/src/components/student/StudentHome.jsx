@@ -9,7 +9,6 @@ import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 
 import bgForChat from "../../assets/ChatDoodle3.png";
-import Header from "../common/Header";
 import InHeader from "../common/InHeader";
 
 
@@ -156,54 +155,17 @@ const StudentHome = () => {
 
   return (
     <div className="w-full relative">
-      {/* <Header/> */}
-      <InHeader />
-      <img src={bgForChat} alt="Banner" className="absolute bg-repeat  w-full" />
+      <img src={bgForChat} alt="Banner" className="absolute bg-repeat w-full" />
       <div className="relative max-h-svh">
         <div className="container mx-auto p-4 max-w-3xl">
-          <nav className="">
-            <div
-              className="relative flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer"
-              style={{
-                border: "2px solid #ffc13b",
-              }}
-            >
-              <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
-                Student Home
-              </h2>
-              <div className="flex justify-center items-center gap-3">
-                <button
-                  onClick={() => navigate("/FacultyDetails")}
-                  className="p-3 rounded-full mr-3"
-                  style={{
-                    backgroundColor: "#ffc13b",
-                  }}
-                >
-                  Faculty Details
-                </button>
-                <button
-                  onClick={() => navigate("/StudentChatlist")}
-                  className="p-3 rounded-full mr-3"
-                  style={{
-                    backgroundColor: "#ffc13b",
-                  }}
-                >
-                  Faculty chat
-                </button>
-                <h2 className="font-bold text-2xl">Logout</h2>
-                <button
-                  onClick={() => navigate("/")}
-                  className="p-3 rounded-full mr-3"
-                  style={{
-                    backgroundColor: "#ffc13b",
-                  }}
-                >
-                  <FaSignOutAlt className="text-2xl" />
-                </button>
-              </div>
-            </div>
-          </nav>
-
+          <div className="rounded-2xl p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
+            <h1 className="text-xl font-semibold text-white">Announcements</h1>
+          </div>
+          {/* <nav className="bg-[#08415C] p-2 sm:p-4 rounded-lg md:rounded-3xl flex justify-center items-center">
+            <p className="text-xl font-semibold text-white">
+              Announcements
+            </p>
+          </nav> */}
           <div className="mt-6 space-y-4">
             {posts.length === 0 ? (
               <p className="text-center text-gray-500">No posts available.</p>
@@ -312,13 +274,6 @@ const StudentHome = () => {
             )}
           </div>
         </div>
-      </div>
-      <div className=" sticky mr-6 w-15 bottom-0 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
-        <BsFilterCircle
-          size={30}
-          className="text-white"
-          onClick={() => navigate("/Chatroom")}
-        />
       </div>
     </div>
   );

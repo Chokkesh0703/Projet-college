@@ -147,7 +147,7 @@ const Studentchatroom = () => {
         />
         <button
           onClick={handleSendMessage}
-          className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600"
+          className="bg-yellow-400 text-zinc-950 px-4 py-2 rounded-r-lg hover:bg-yellow-500"
         >
           Send
         </button>

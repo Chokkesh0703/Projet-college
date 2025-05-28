@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { TextField } from "@mui/material";
 
 const FacultyDetails = () => {
   const [students, setStudents] = useState([]);
@@ -89,29 +90,35 @@ const FacultyDetails = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="font-bold text-3xl mb-4">Faculty Requests</h1>
+    <div className="">
+      <div className="p-4 text-black text-lg flex justify-between items-center" style={{ backgroundColor: '#08415C' }}>
+        <h1 className="text-xl font-semibold text-white">Faculty Requests</h1>
+      </div>
+      {/* <h1 className="font-bold text-3xl mb-4">Faculty Requests</h1> */}
 
       {/* Search & Filter */}
-      <div className="px-10 flex flex-col md:flex-row justify-between gap-4 mb-20">
-        <Input
-          placeholder="Search by name..."
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          className="md:w-1/2"
-        />
+      <div className="px-10 flex flex-col md:flex-col justify-between gap-4 mb-20 mt-12">
+        <div className="w-full">
+          <TextField
+            variant="filled"
+            placeholder="Search by name..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="w-full md:w-1/2"
+          />
+        </div>
         <div className="w-full md:w-1/3">
           <label className="block mb-1 text-gray-700">Filter by course:</label>
           <Select onValueChange={setSelectedCourse} value={selectedCourse}>
             <SelectTrigger className="w-full h-full">
               <SelectValue placeholder="Filter by course" />
               <SelectContent>
-              {getUniqueCourses().map((course) => (
-                <SelectItem key={course} value={course}>
-                  {course}
-                </SelectItem>
-              ))}
-            </SelectContent>
+                {getUniqueCourses().map((course) => (
+                  <SelectItem key={course} value={course}>
+                    {course}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </SelectTrigger>
           </Select>
         </div>
@@ -132,13 +139,10 @@ const FacultyDetails = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-500">College ID: {faculty.collegeid}</p>
-                <p className="text-gray-500">
-                  Year of Passing: {faculty.yearofpass}
-                </p>
               </CardContent>
               <Button
                 onClick={() => handleCreateChat(faculty._id)}
-                className="mt-2 bg-blue-500 text-white w-full"
+                className="mt-2 bg-yellow-400 text-zinc-950 w-full"
               >
                 Start Chat
               </Button>

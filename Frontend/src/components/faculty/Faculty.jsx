@@ -5,12 +5,11 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
-import InstructionAdmin from "../instructions/InstructionAdmin"
-import InstructionFaculty from "../instructions/InstructionFaculty"
-import InstructionStudents from "../instructions/InstructionStudents"
-import Footer from './Footer';
-import Header from './Header';
-
+import InHeader from '../common/InHeader';
+import Chatroom from '../pages/Chatroom';
+import FacultyHome from './FacultyHome';
+import StudentDetails from '../student/StudentDetails';
+import Header from '../common/Header';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -51,8 +50,8 @@ export default function BasicTabs() {
     };
 
     return (
-        <div className="h-[100vh]">
-            <Header />
+        <div className="">
+            {/* <Header /> */}
             <Box sx={{ width: '100%' }}>
                 <Box sx={{
                     borderBottom: 1,
@@ -61,10 +60,10 @@ export default function BasicTabs() {
                     top: 0,
                     zIndex: 10,
                     backgroundColor: 'white',
-                    display:'flex',
-                    justifyContent:"center",
-                    alignItems:'center',
-                    height:'10vh',
+                    display: 'flex',
+                    justifyContent: "center",
+                    alignItems: 'center',
+                    height: '10vh',
                 }}>
                     <Tabs
                         value={value}
@@ -82,56 +81,19 @@ export default function BasicTabs() {
                             }
                         }}
                     >
-                        <Tab label={isMobile ? "Student" : "Student Guide"} {...a11yProps(0)} />
-                        <Tab label={isMobile ? "Faculty" : "Faculty Guide"} {...a11yProps(1)} />
-                        <Tab label={isMobile ? "Admin" : "Admin Guide"} {...a11yProps(2)} />
+                        <Tab label="POsts" {...a11yProps(0)} />
+                        <Tab label={isMobile ? "Students" : "Students Details"} {...a11yProps(1)} />
                     </Tabs>
                 </Box>
 
                 {/* Tab panels without swipe functionality */}
                 <CustomTabPanel value={value} index={0}>
-                    <InstructionStudents />
+                    <FacultyHome />
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
-                    <InstructionFaculty/>
-                </CustomTabPanel>
-                <CustomTabPanel value={value} index={2}>
-                    <InstructionAdmin />
+                    <StudentDetails />
                 </CustomTabPanel>
             </Box>
-            <Footer/>
         </div>
     );
 }
-
-// // import React from 'react'
-// // common
-// import Header from './Header';
-
-// //instructions
-// import InstructionStudents from '../instructions/InstructionStudents'
-// import InstructionAdmin from '../instructions/InstructionAdmin'
-// import InstructionFaculty from '../instructions/InstructionFaculty'
-// import Footer from './Footer';
-
-// const CommonRegistration = () => {
-//   return (
-//     <div>
-//       <Header />
-//       <div className="">
-//         <div className="">
-//           <InstructionStudents />
-//         </div>
-//         <div className="">
-//           <InstructionFaculty />
-//         </div>
-//         <div className="">
-//           <InstructionAdmin />
-//         </div>
-//       </div>
-//       <Footer />
-//     </div>
-//   )
-// }
-
-// export default CommonRegistration

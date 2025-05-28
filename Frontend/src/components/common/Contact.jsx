@@ -6,7 +6,7 @@ const Contact = () => {
   return (
     <div className="">
         <Header />
-      <div className="h-screen flex justify-center items-center"> 
+      <div className="my-44 flex justify-center items-center"> 
         <div className="container mx-auto p-6 bg-white shadow-lg">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Contact Us</h1>
 

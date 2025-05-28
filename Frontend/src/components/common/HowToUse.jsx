@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './Header';
-import Footer from './Footer';
+import InFooter from './InFooter';
 
 const HowtoUse = () => {
   return (
@@ -55,7 +55,7 @@ const HowtoUse = () => {
           <p className="text-gray-700 leading-relaxed">For any assistance, feel free to reach out to our support team through the contact page.</p>
         </section>
       </div>
-      <Footer/>
+      <InFooter/>
     </div>
   )
 }

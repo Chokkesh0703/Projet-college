@@ -24,6 +24,8 @@ const FacultyHome = () => {
   const userId = sessionStorage.getItem("userId") || "";
   const token = sessionStorage.getItem("token");
   const Role = sessionStorage.getItem("role");
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -207,130 +209,153 @@ const FacultyHome = () => {
   };
 
   return (
-    <div className="" style={{
-      backgroundImage: `url(${BgStudent3})`,
-      backdropFilter: 'blur(40px)'
-    }}>
-      {/* <Header /> */}
-      <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex justify-between align-middle bg-white p-4 rounded-full shadow-lg cursor-pointer" style={{
-          border: '2px solid #ffc13b'
-        }}>
-          <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
-            Faculty Home
-          </h2>
-          <div className="flex justify-center items-center gap-3">
-            <button 
-              onClick={() => navigate("/StudentDetails")}
-              className="p-3 rounded-full mr-3"
-              style={{
-                backgroundColor: '#ffc13b'
-              }}
-            >
-              Students Details
+    <div className="">
+      <div className="" style={{
+        backgroundImage: `url(${BgStudent3})`,
+        backdropFilter: 'blur(40px)'
+      }}>
+        {/* <Header /> */}
+        <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
+          <h1 className="text-xl font-semibold text-white">Announcements</h1>
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
+          >
+            <FaSignOutAlt className="text-xl" />
+            <span className="hidden lg:inline">Logout</span>
+          </button>
+        </div>
+
+        <div className="container mx-auto mt-2 p-4 max-w-3xl">
+
+          {/* Post Upload Form */}
+          <form onSubmit={handlePostSubmit} className="bg-gray-100 p-4 rounded-lg shadow-lg">
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="w-full p-2 border rounded"
+              placeholder="Write something..."
+              required
+            />
+            <input type="file" accept="image/*, video/*" onChange={(e) => setFile(e.target.files[0])} className="my-2 block w-full" />
+            <button type="submit" className="bg-yellow-400 text-zinc-950 px-4 py-2 rounded w-full">
+              Post
             </button>
-            <h2 className="font-bold text-2xl">Logout</h2>
+          </form>
+
+          {/* Display Posts */}
+          <div className="mt-6 space-y-4">
+            {loading ? (
+              <p className="text-center text-gray-500">Loading posts...</p>
+            ) : posts.length === 0 ? (
+              <p className="text-center text-gray-500">No posts available.</p>
+            ) : (
+              posts.map((post) => (
+                <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
+                  <p className="mb-2">{post.text}</p>
+
+                  {/* Display Media */}
+                  {post.mediaUrl && (
+                    <div className="mt-2">
+                      {post.mediaType === "image" ? (
+                        <img src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} alt="Post" className="w-full rounded-lg" />
+                      ) : (
+                        <video src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} controls className="w-full rounded-lg" />
+                      )}
+                    </div>
+                  )}
+
+                  {/* Like & Comment Actions */}
+                  <div className="flex items-center justify-between mt-4">
+                    <button onClick={() => handleLike(post._id)} className="flex items-center space-x-2">
+                      {post.likes.includes(userId) ? <AiFillLike className="text-red-500" size={20} /> : <AiOutlineLike className="text-gray-600" size={20} />}
+                      <span>{post.likes.length}</span>
+                    </button>
+
+                    <button onClick={() => setShowComments({ ...showComments, [post._id]: !showComments[post._id] })} className="flex items-center space-x-2">
+                      <FaRegCommentDots className="text-gray-600" size={20} />
+                      <span>{post.comments.length}</span>
+                    </button>
+
+                    <button onClick={() => handleDelete(post._id)}>
+                      <AiOutlineDelete className="text-red-500" size={20} />
+                    </button>
+                  </div>
+
+                  {/* Comment Section */}
+                  {showComments[post._id] && (
+                    <div className="mt-4 p-2 bg-gray-100 rounded">
+                      {post.comments.map((comment) => (
+                        <div key={comment._id} className="flex justify-between items-center p-2">
+                          <p>
+                            <strong>{comment.user?.name || "Anonymous"}:</strong> {comment.text}
+                          </p>
+                          <button onClick={() => { console.log(comment._id); handleDeleteComment(post._id, comment._id) }}>
+                            <MdCancel className="text-red-500" />
+                          </button>
+                        </div>
+                      ))}
+                      <input type="text" value={commentText[post._id] || ""} onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })} className="w-full mt-2 p-2 border rounded" />
+                      <button onClick={() => handleCommentSubmit(post._id)} className="bg-green-500 text-white px-3 py-1 rounded mt-2">
+                        Add Comment
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
+          <BsFilterCircle
+            size={30}
+            className="text-white"
+            onClick={() => navigate("/Facultychatlist")}
+          />
+        </div>
+        <Footer />
+      </div>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-yellow-400 p-4 shadow-md">
+          <div className="flex flex-col gap-4">
             <button
-              onClick={() => navigate("/")}
-              className="p-3 rounded-full mr-3"
-              style={{
-                backgroundColor: '#ffc13b'
+              onClick={() => {
+                setShowLogoutConfirm(true);
+                setMobileMenuOpen(false);
               }}
+              className="w-full px-4 py-2 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
             >
-              <FaSignOutAlt className="text-2xl" />
+              <FaSignOutAlt className="text-xl" />
+              <span>Logout</span>
             </button>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="container mx-auto mt-2 p-4 max-w-3xl">
-
-        {/* Post Upload Form */}
-        <form onSubmit={handlePostSubmit} className="bg-gray-100 p-4 rounded-lg shadow-lg">
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Write something..."
-            required
-          />
-          <input type="file" accept="image/*, video/*" onChange={(e) => setFile(e.target.files[0])} className="my-2 block w-full" />
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
-            Post
-          </button>
-        </form>
-
-        {/* Display Posts */}
-        <div className="mt-6 space-y-4">
-          {loading ? (
-            <p className="text-center text-gray-500">Loading posts...</p>
-          ) : posts.length === 0 ? (
-            <p className="text-center text-gray-500">No posts available.</p>
-          ) : (
-            posts.map((post) => (
-              <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
-                <p className="mb-2">{post.text}</p>
-
-                {/* Display Media */}
-                {post.mediaUrl && (
-                  <div className="mt-2">
-                    {post.mediaType === "image" ? (
-                      <img src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} alt="Post" className="w-full rounded-lg" />
-                    ) : (
-                      <video src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} controls className="w-full rounded-lg" />
-                    )}
-                  </div>
-                )}
-
-                {/* Like & Comment Actions */}
-                <div className="flex items-center justify-between mt-4">
-                  <button onClick={() => handleLike(post._id)} className="flex items-center space-x-2">
-                    {post.likes.includes(userId) ? <AiFillLike className="text-red-500" size={20} /> : <AiOutlineLike className="text-gray-600" size={20} />}
-                    <span>{post.likes.length}</span>
-                  </button>
-
-                  <button onClick={() => setShowComments({ ...showComments, [post._id]: !showComments[post._id] })} className="flex items-center space-x-2">
-                    <FaRegCommentDots className="text-gray-600" size={20} />
-                    <span>{post.comments.length}</span>
-                  </button>
-
-                  <button onClick={() => handleDelete(post._id)}>
-                    <AiOutlineDelete className="text-red-500" size={20} />
-                  </button>
-                </div>
-
-                {/* Comment Section */}
-                {showComments[post._id] && (
-                  <div className="mt-4 p-2 bg-gray-100 rounded">
-                    {post.comments.map((comment) => (
-                      <div key={comment._id} className="flex justify-between items-center p-2">
-                        <p>
-                          <strong>{comment.user?.name || "Anonymous"}:</strong> {comment.text}
-                        </p>
-                        <button onClick={() => { console.log(comment._id); handleDeleteComment(post._id, comment._id) }}>
-                          <MdCancel className="text-red-500" />
-                        </button>
-                      </div>
-                    ))}
-                    <input type="text" value={commentText[post._id] || ""} onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })} className="w-full mt-2 p-2 border rounded" />
-                    <button onClick={() => handleCommentSubmit(post._id)} className="bg-green-500 text-white px-3 py-1 rounded mt-2">
-                      Add Comment
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-      <div className="sticky mr-6 w-15 bottom-5 left-full bg-blue-500 p-4 rounded-full cursor-pointer">
-              <BsFilterCircle
-                size={30}
-                className="text-white"
-                onClick={() => navigate("/Facultychatlist")}
-              />
+      {/* Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-11/12 sm:w-auto">
+            <h3 className="text-xl font-bold mb-4">Confirm Logout</h3>
+            <p className="mb-6">Are you sure you want to logout?</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="px-4 py-2 bg-[#ffc13b] rounded hover:bg-[#e6ac35] transition-colors"
+              >
+                Yes, Logout
+              </button>
             </div>
-      <Footer />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

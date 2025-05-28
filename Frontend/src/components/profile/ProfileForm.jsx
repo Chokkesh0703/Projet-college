@@ -114,7 +114,8 @@ const ProfileForm = () => {
 
             await axios.post('http://localhost:8000/api/me/profile', profileData, {
                 headers: {
-                    'x-auth-token': token
+                    'x-auth-token': token,
+                    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                 }
             });
 

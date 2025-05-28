@@ -6,7 +6,7 @@ import { MdCancel } from "react-icons/md";
 import { io } from "socket.io-client";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import BgStudent3 from '../../assets/ChatDoodle3.png'
 
 const API_BASE_URL = "http://localhost:8000"  // Ensure backend is running
@@ -202,31 +202,24 @@ const AdminPost = () => {
     }
   };
 
+  const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="" style={{
       backgroundImage: `url(${BgStudent3})`,
       backdropFilter: 'blur(40px)'
     }}>
-      <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex justify-between align-middle bg-white  mt-8 p-4 rounded-full shadow-lg cursor-pointer" style={{
-          border: '2px solid #ffc13b'
-        }}>
-          <h2 className="flex justify-center items-center ml-3 font-bold text-2xl">
-            Admin Home
-          </h2>
-          <div className="flex justify-center items-center gap-3">
-            <h2 className="font-bold text-2xl">Logout</h2>
-            <button
-              onClick={() => Navigate("/")}
-              className="p-3 rounded-full mr-3"
-              style={{
-                backgroundColor: '#ffc13b'
-              }}
-            >
-              <FaSignOutAlt className="text-2xl" />
-            </button>
-          </div>
-        </div>
+      <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
+        <h1 className="text-xl font-semibold text-white">Announcements</h1>
+        <button
+          onClick={() => setShowLogoutConfirm(true)}
+          className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
+        >
+          <FaSignOutAlt className="text-xl" />
+          <span className="hidden lg:inline">Logout</span>
+        </button>
       </div>
 
       <div className="container mx-auto mt-2 p-4 max-w-3xl">
@@ -309,7 +302,47 @@ const AdminPost = () => {
           )}
         </div>
       </div>
-      <Footer />
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-yellow-400 p-4 shadow-md">
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={() => {
+                setShowLogoutConfirm(true);
+                setMobileMenuOpen(false);
+              }}
+              className="w-full px-4 py-2 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
+            >
+              <FaSignOutAlt className="text-xl" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-11/12 sm:w-auto">
+            <h3 className="text-xl font-bold mb-4">Confirm Logout</h3>
+            <p className="mb-6">Are you sure you want to logout?</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="px-4 py-2 bg-[#ffc13b] rounded hover:bg-[#e6ac35] transition-colors"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
