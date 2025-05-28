@@ -67,7 +67,7 @@ const AdminHome = () => {
 
   return (
     <div className="bg-cover bg-no-repeat" style={{
-      // backgroundImage:`url(${BgAdmin2})`
+      
     }}>
       <InHeader />
       <Box sx={{ width: '100%' }}>

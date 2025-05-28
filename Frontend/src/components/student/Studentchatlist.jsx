@@ -55,10 +55,6 @@ const StudentChatlist = () => {
       <div className="p-4 text-black text-lg flex justify-between items-center w-screen" style={{ backgroundColor: '#08415C' }}>
         <h1 className="text-xl font-semibold text-white">Available Chatrooms</h1>
       </div>
-      {/* <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
-        <h1 className="text-2xl font-bold mb-4 text-white">Available Chatrooms</h1>
-      </div> */}
-      {/* Search and Filter Bar */}
       <div className="px-10 flex flex-col md:flex-row gap-4 mb-6 mt-12">
         <TextField
           variant='filled'

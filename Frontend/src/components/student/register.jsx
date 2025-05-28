@@ -254,50 +254,6 @@ const Register = () => {
       <InFooter/>
     </div>
   );
-
-  // return (
-  //   <div className="flex flex-col items-center justify-center min-h-screen" style={{
-  //     backgroundColor: '#f5f0e1',
-  //   }}>
-  //     <div className="bg-white p-6 rounded-lg shadow-md w-96">
-  //       <h1 className="text-2xl font-bold mb-4 text-center">Student Registration</h1>
-
-  //       {!registered ? (
-  //         <form onSubmit={submit} className="flex flex-col gap-3">
-  //           <input type="text" name="name" placeholder="Name" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="text" name="course" placeholder="Course/designation" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="text" name="collegeid" placeholder="College ID" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="text" name="unid" placeholder="University Register Number" onChange={handleChange} className="p-2 border rounded" />
-  //           <input type="number" name="yearofpass" placeholder="Year of Passout" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="email" name="email" placeholder="Email" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="text" name="phoneno" placeholder="Phone Number" onChange={handleChange} className="p-2 border rounded" required />
-  //           <input type="password" name="Password" placeholder="Password" onChange={handleChange} className="p-2 border rounded" required />
-
-  //           {/* Role Selection Dropdown */}
-  //           <select name="role" value={formData.role} onChange={handleChange} className="p-2 border rounded">
-  //             <option value="student">Student</option>
-  //             {/* <option value="admin">Admin</option> */}
-  //           </select>
-
-  //           <button type="submit" className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Register</button>
-  //         </form>
-  //       ) : (
-  //         <div className="text-center">
-  //           <h2 className="text-green-600 text-lg font-semibold">Successfully Registered!</h2>
-  //           <button
-  //             onClick={() => {
-  //               sessionStorage.removeItem("registered");
-  //               navigate("/");
-  //             }}
-  //             className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-  //           >
-  //             Back to Login
-  //           </button>
-  //         </div>
-  //       )}
-  //     </div>
-  //   </div >
-  // );
 };
 
 export default Register;

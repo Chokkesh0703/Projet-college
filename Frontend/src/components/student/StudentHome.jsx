@@ -4,12 +4,11 @@ import axios from "axios";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots, FaSignOutAlt } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
-import { BsFilterCircle } from "react-icons/bs";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 
 import bgForChat from "../../assets/ChatDoodle3.png";
-import InHeader from "../common/InHeader";
+
 
 
 const API_BASE_URL = "http://localhost:8000";

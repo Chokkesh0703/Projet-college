@@ -104,34 +104,3 @@ export default function BasicTabs() {
     );
 }
 
-// // import React from 'react'
-// // common
-// import Header from './Header';
-
-// //instructions
-// import InstructionStudents from '../instructions/InstructionStudents'
-// import InstructionAdmin from '../instructions/InstructionAdmin'
-// import InstructionFaculty from '../instructions/InstructionFaculty'
-// import Footer from './Footer';
-
-// const CommonRegistration = () => {
-//   return (
-//     <div>
-//       <Header />
-//       <div className="">
-//         <div className="">
-//           <InstructionStudents />
-//         </div>
-//         <div className="">
-//           <InstructionFaculty />
-//         </div>
-//         <div className="">
-//           <InstructionAdmin />
-//         </div>
-//       </div>
-//       <Footer />
-//     </div>
-//   )
-// }
-
-// export default CommonRegistration

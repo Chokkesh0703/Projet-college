@@ -4,9 +4,7 @@ import { AiFillLike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { FaRegCommentDots, FaSignOutAlt } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { io } from "socket.io-client";
-import Header from "../common/Header";
-import Footer from "../common/Footer";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BgStudent3 from '../../assets/ChatDoodle3.png'
 
 const API_BASE_URL = "http://localhost:8000"  // Ensure backend is running

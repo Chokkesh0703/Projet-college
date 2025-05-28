@@ -1,4 +1,3 @@
-// import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/auth/login/Login";
 import Student from "./components/student/Student"
@@ -27,7 +26,6 @@ import FacultyHome from "./components/faculty/FacultyHome";
 import FacultyDetails from "./components/faculty/FacultyDetails";
 import StudentDetails from "./components/student/StudentDetails";
 import FacultyChatroom from "./components/faculty/FacultyChatroom";
-import PrivateRoute from "./routes/PrivateRoute";
 import FacultyChatlist from "./components/faculty/Facultychatlist";
 import Studentchatroom from "./components/student/Studentchatroom";
 import StudentChatlist from "./components/student/Studentchatlist";

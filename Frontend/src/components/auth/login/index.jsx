@@ -4,9 +4,8 @@ import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
 import banner from "../../../assets/banner.png";
 import { TextField } from "@mui/material";
-import { Button } from "material";
 
-// Simple Login components for email, Google, and Facebook (for illustration purposes)
+
 const StudentLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();

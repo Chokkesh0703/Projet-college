@@ -5,9 +5,7 @@ import { AiFillLike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { FaRegCommentDots, FaSignOutAlt } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { io } from "socket.io-client";
-import Header from "../common/Header";
 import Footer from "../common/Footer";
-import { Navigate } from "react-router-dom";
 import BgStudent3 from '../../assets/ChatDoodle3.png'
 import { BsFilterCircle } from "react-icons/bs";
 

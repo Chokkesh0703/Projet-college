@@ -75,7 +75,7 @@ app.get("/", (req, res) => {
 
 // Socket.IO Handlers
 io.on("connection", (socket) => {
-  console.log(` Socket connected: ${socket.id}`);
+  // console.log(` Socket connected: ${socket.id}`);
 
   // --- Like or Unlike Post ---
   socket.on("likePost", async ({ postId, userId }) => {
@@ -125,13 +125,13 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({ course, yearofpass }) => {
     const room = `${course}-${yearofpass}`;
     socket.join(room);
-    console.log(`User ${socket.id} joined room: ${room}`);
+    // console.log(`User ${socket.id} joined room: ${room}`);
   });
 
   // --- Faculty-Student 1:1 Chatroom Join ---
   socket.on("join_room", async (chatroomId) => {
     socket.join(chatroomId);
-    console.log(`User joined chatroom: ${chatroomId}`);
+    // console.log(`User joined chatroom: ${chatroomId}`);
     try {
       const chatroom = await Chats.findById(chatroomId);
       if (chatroom) {
@@ -158,7 +158,7 @@ io.on("connection", (socket) => {
 
   // --- Handle Disconnect ---
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    // console.log("User disconnected:", socket.id);
   });
 });
 
