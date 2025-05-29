@@ -111,14 +111,23 @@ const AdminPost = () => {
     if (!token || !userId) return alert("Unauthorized! Please log in.");
 
     try {
-      const { data } = await axios.put(
+      await axios.put(
         `${API_BASE_URL}/api/posts/like/${postId}`,
         { userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setPosts((prev) =>
-        prev.map((post) => (post._id === postId ? data : post))
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                likes: post.likes.includes(userId)
+                  ? post.likes.filter((id) => id !== userId)
+                  : [...post.likes, userId],
+              }
+            : post
+        )
       );
     } catch (error) {
       console.error("Error liking post:", error.response?.data || error.message);
@@ -403,3 +412,4 @@ const AdminPost = () => {
 };
 
 export default AdminPost;
+

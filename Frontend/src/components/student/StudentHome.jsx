@@ -27,16 +27,7 @@ const StudentHome = () => {
       setPosts((prevPosts) => [newPost, ...prevPosts]);
     });
 
-    socket.on("postLiked", ({ postId, likes }) => {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? { ...post, likes: Array(likes).fill(userId) } // Simplified - adjust if you store real user IDs
-            : post
-        )
-      );
-    });
-
+    
     socket.on("commentAdded", ({ postId, comments }) => {
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
@@ -80,11 +71,11 @@ const StudentHome = () => {
     }
   };
 
-  const handleLike = async (postId) => {
+   const handleLike = async (postId) => {
     if (!token || !userId) return alert("Unauthorized! Please log in.");
 
     try {
-      const { data } = await axios.put(
+      await axios.put(
         `${API_BASE_URL}/api/posts/like/${postId}`,
         { userId },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -95,9 +86,9 @@ const StudentHome = () => {
           post._id === postId
             ? {
                 ...post,
-                likes: post.likes?.includes(userId)
+                likes: post.likes.includes(userId)
                   ? post.likes.filter((id) => id !== userId)
-                  : [...(post.likes || []), userId],
+                  : [...post.likes, userId],
               }
             : post
         )
@@ -106,6 +97,7 @@ const StudentHome = () => {
       console.error("Error liking post:", error.response?.data || error.message);
     }
   };
+
 
   const handleCommentSubmit = async (postId) => {
     if (!commentText[postId]?.trim()) return alert("Comment cannot be empty");
