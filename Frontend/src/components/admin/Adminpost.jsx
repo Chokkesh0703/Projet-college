@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AiFillLike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { FaRegCommentDots, FaSignOutAlt } from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-import BgStudent3 from '../../assets/ChatDoodle3.png'
+import BgStudent3 from "../../assets/ChatDoodle3.png";
 
-const API_BASE_URL = "http://localhost:8000"  // Ensure backend is running
-const socket = io(API_BASE_URL);
+const API_BASE_URL = "http://localhost:8000";
 
 const AdminPost = () => {
   const [posts, setPosts] = useState([]);
@@ -17,24 +15,53 @@ const AdminPost = () => {
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState({});
   const [showComments, setShowComments] = useState({});
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const userId = sessionStorage.getItem("userId") || "";
-  const token = sessionStorage.getItem("token");
-  const Role = sessionStorage.getItem("role")
+  const token = sessionStorage.getItem("token") || "";
+  const Role = sessionStorage.getItem("role") || "";
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPosts();
+    const socket = io(API_BASE_URL);
+
     socket.on("postUpdated", (updatedPost) => {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === updatedPost._id ? updatedPost : post
+      setPosts((prev) =>
+        prev.map((post) => (post._id === updatedPost._id ? updatedPost : post))
+      );
+    });
+
+    socket.on("commentAdded", ({ postId, comments }) => {
+      setPosts((prev) =>
+        prev.map((post) =>
+          post._id === postId ? { ...post, comments } : post
         )
       );
     });
 
-    return () => socket.off("postUpdated");
+    socket.on("postDeleted", ({ postId }) => {
+      setPosts((prev) => prev.filter((post) => post._id !== postId));
+    });
+
+    socket.on("commentDeleted", ({ postId, commentId }) => {
+      setPosts((prev) =>
+        prev.map((post) =>
+          post._id === postId
+            ? {
+                ...post,
+                comments: post.comments?.filter((c) => c._id !== commentId),
+              }
+            : post
+        )
+      );
+    });
+
+    return () => socket.disconnect();
   }, []);
 
-  // Fetch all posts
   const fetchPosts = async () => {
     setLoading(true);
     try {
@@ -47,12 +74,8 @@ const AdminPost = () => {
     }
   };
 
-
-
-  // Handle post submission
   const handlePostSubmit = async (e) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("token");
     if (!token) return alert("Unauthorized! Please log in.");
 
     try {
@@ -60,7 +83,10 @@ const AdminPost = () => {
       formData.append("text", text);
       if (file) {
         formData.append("file", file);
-        formData.append("mediaType", file.type.startsWith("image") ? "image" : "video");
+        formData.append(
+          "mediaType",
+          file.type.startsWith("image") ? "image" : "video"
+        );
       } else {
         formData.append("mediaType", "none");
       }
@@ -68,7 +94,7 @@ const AdminPost = () => {
       await axios.post(`${API_BASE_URL}/api/posts/create`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          Role: `${Role}`,
+          Role,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -81,259 +107,297 @@ const AdminPost = () => {
     }
   };
 
-  // Handle like/unlike post
   const handleLike = async (postId) => {
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
-
     if (!token || !userId) return alert("Unauthorized! Please log in.");
 
     try {
       const { data } = await axios.put(
         `${API_BASE_URL}/api/posts/like/${postId}`,
         { userId },
-        { headers: { Authorization: `Bearer ${token}`, } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? { ...post, likes: post.likes.includes(userId) ? post.likes.filter((id) => id !== userId) : [...post.likes, userId] }
-            : post
-        )
-      ); console.log(data);
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId ? data : post))
+      );
     } catch (error) {
       console.error("Error liking post:", error.response?.data || error.message);
     }
   };
 
-
-  // Handle comment submission
   const handleCommentSubmit = async (postId) => {
     if (!commentText[postId]?.trim()) return alert("Comment cannot be empty");
-
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
-
-    if (!token || !userId) {
-      return alert("Unauthorized! Please log in.");
-    }
+    if (!token || !userId) return alert("Unauthorized! Please log in.");
 
     try {
       const { data } = await axios.post(
         `${API_BASE_URL}/api/posts/comment/${postId}`,
         { userId, text: commentText[postId] },
-        { headers: { Authorization: `Bearer ${token}`, Role: `${Role}`, } }
+        { headers: { Authorization: `Bearer ${token}`, Role } }
       );
 
       const newComment = {
-        _id: data.commentId, // Assume API returns the new comment's ID
-        user: { _id: userId, }, // Show the commenter's name immediately
+        _id: data.commentId,
+        user: { _id: userId, name: "You" },
         text: commentText[postId],
         createdAt: new Date().toISOString(),
       };
 
-      // Update posts state directly to reflect the new comment
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
+      setPosts((prev) =>
+        prev.map((post) =>
           post._id === postId
             ? { ...post, comments: [...post.comments, newComment] }
             : post
         )
       );
 
-      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Ensure proper state update
-
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
       console.error("Error adding comment:", error.response?.data || error.message);
-      alert("Failed to add comment. Please try again.");
     }
   };
 
-
-  // Handle delete post
   const handleDelete = async (postId) => {
-    const token = sessionStorage.getItem("token");
-    const Role = sessionStorage.getItem("role");
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
-
-    if (!token) {
-      console.error("User not authenticated");
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    if (!token) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/posts/delete/${postId}`, {
+      await axios.delete(`${API_BASE_URL}/api/posts/delete/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log("Post deleted successfully");
       fetchPosts();
     } catch (error) {
-      console.error("Error deleting post:", error.response?.data || error.message);
+      console.error("Error deleting post:", error);
     }
   };
 
-  // Handle delete comment with confirmation
   const handleDeleteComment = async (postId, commentId) => {
-    const userId = sessionStorage.getItem("userId");
-    const Role = sessionStorage.getItem("role");
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Delete this comment?")) return;
 
     try {
       await axios.delete(`${API_BASE_URL}/api/posts/comment/${postId}/${commentId}`, {
-        data: { userId, Role }, //  Move data outside headers
-        headers: { Authorization: `Bearer ${token}` }, //  Only token in headers
+        data: { userId, Role },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      // Update posts state directly to remove the comment
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
+
+      setPosts((prev) =>
+        prev.map((post) =>
           post._id === postId
-            ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+            ? {
+                ...post,
+                comments: post.comments.filter((c) => c._id !== commentId),
+              }
             : post
         )
       );
-
-      console.log("Comment deleted successfully");
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
 
-  const navigate = useNavigate();
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const confirmLogout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
 
   return (
-    <div className="" style={{
-      backgroundImage: `url(${BgStudent3})`,
-      backdropFilter: 'blur(40px)'
-    }}>
-      <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
-        <h1 className="text-xl font-semibold text-white">Announcements</h1>
-      </div>
+    <div
+      className="min-h-screen bg-cover bg-no-repeat bg-center"
+      style={{ backgroundImage: `url(${BgStudent3})` }}
+    >
+      <header className="bg-[#08415C] text-white p-4 shadow-md flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Admin Announcements</h1>
+      </header>
 
-      <div className="container mx-auto mt-2 p-4 max-w-3xl">
-
-        {/* Post Upload Form */}
-        <form onSubmit={handlePostSubmit} className="bg-gray-100 p-4 rounded-lg shadow-lg">
+      <main className="container mx-auto px-4 py-6 max-w-3xl">
+        {/* Upload Form */}
+        <form onSubmit={handlePostSubmit} className="bg-white p-4 rounded-lg shadow-md space-y-3">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Write something..."
+            className="w-full border rounded p-2 resize-none"
+            rows={3}
+            placeholder="What's on your mind?"
             required
           />
-          <input type="file" accept="image/*, video/*" onChange={(e) => setFile(e.target.files[0])} className="my-2 block w-full" />
-          <button type="submit" className="bg-yellow-400 text-zinc-950 px-4 py-2 rounded w-full">
+          <input
+            type="file"
+            accept="image/*, video/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="block"
+          />
+          <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 rounded">
             Post
           </button>
         </form>
 
-        {/* Display Posts */}
-        <div className="mt-6 space-y-4">
+        {/* Posts */}
+        <section className="mt-6 space-y-6">
           {loading ? (
             <p className="text-center text-gray-500">Loading posts...</p>
           ) : posts.length === 0 ? (
             <p className="text-center text-gray-500">No posts available.</p>
           ) : (
             posts.map((post) => (
-              <div key={post._id} className="bg-white p-4 rounded-lg shadow-lg">
-                <p className="mb-2">{post.text}</p>
+              <article
+                key={post._id}
+                className="bg-white p-4 rounded-lg shadow-md space-y-2"
+              >
+                <p>{post.text}</p>
 
-                {/* Display Media */}
                 {post.mediaUrl && (
-                  <div className="mt-2">
+                  <div>
                     {post.mediaType === "image" ? (
-                      <img src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} alt="Post" className="w-full rounded-lg" />
+                      <img
+                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                        alt="Post media"
+                        className="w-full rounded"
+                      />
                     ) : (
-                      <video src={`${API_BASE_URL}/uploads/${post.mediaUrl}`} controls className="w-full rounded-lg" />
+                      <video
+                        controls
+                        src={`${API_BASE_URL}/uploads/${post.mediaUrl}`}
+                        className="w-full rounded"
+                      />
                     )}
                   </div>
                 )}
 
-                {/* Like & Comment Actions */}
-                <div className="flex items-center justify-between mt-4">
-                  <button onClick={() => handleLike(post._id)} className="flex items-center space-x-2">
-                    {post.likes.includes(userId) ? <AiFillLike className="text-red-500" size={20} /> : <AiOutlineLike className="text-gray-600" size={20} />}
-                    <span>{post.likes.length}</span>
+                {/* Like and Comment Buttons */}
+                <div className="flex items-center gap-4 mt-2">
+                  <button onClick={() => handleLike(post._id)} aria-label="Like">
+                    {post.likes?.includes(userId) ? (
+                      <AiFillLike size={24} className="text-blue-600" />
+                    ) : (
+                      <AiOutlineLike size={24} />
+                    )}
+                  </button>
+                  <span>{post.likes?.length || 0}</span>
+
+                  <button
+                    onClick={() =>
+                      setShowComments((prev) => ({
+                        ...prev,
+                        [post._id]: !prev[post._id],
+                      }))
+                    }
+                    className="flex items-center gap-1"
+                    aria-label="Toggle comments"
+                  >
+                    <FaRegCommentDots size={20} />
+                    <span>{post.comments?.length || 0}</span>
                   </button>
 
-                  <button onClick={() => setShowComments({ ...showComments, [post._id]: !showComments[post._id] })} className="flex items-center space-x-2">
-                    <FaRegCommentDots className="text-gray-600" size={20} />
-                    <span>{post.comments.length}</span>
-                  </button>
-
-                  <button onClick={() => handleDelete(post._id)}>
-                    <AiOutlineDelete className="text-red-500" size={20} />
+                  <button
+                    onClick={() => handleDelete(post._id)}
+                    className="text-red-500 ml-auto"
+                    aria-label="Delete Post"
+                  >
+                    <AiOutlineDelete size={22} />
                   </button>
                 </div>
 
-                {/* Comment Section */}
+                {/* Comments Section */}
                 {showComments[post._id] && (
-                  <div className="mt-4 p-2 bg-gray-100 rounded">
-                    {post.comments.map((comment) => (
-                      <div key={comment._id} className="flex justify-between items-center p-2">
-                        <p>
-                          <strong>{comment.user?.name || "Anonymous"}:</strong> {comment.text}
-                        </p>
-                        <button onClick={() => { console.log(comment._id); handleDeleteComment(post._id, comment._id) }}>
-                          <MdCancel className="text-red-500" />
-                        </button>
+                  <div className="mt-2 border-t pt-2 space-y-3">
+                    {post.comments?.map((comment) => (
+                      <div key={comment._id} className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-semibold">
+                            {comment.user?.name || "Anonymous"}
+                          </p>
+                          <p className="text-sm">{comment.text}</p>
+                        </div>
+                        {(comment.user?._id === userId || Role === "admin") && (
+                          <button
+                            onClick={() => handleDeleteComment(post._id, comment._id)}
+                            className="text-red-500"
+                            aria-label="Delete Comment"
+                          >
+                            <AiOutlineDelete size={18} />
+                          </button>
+                        )}
                       </div>
                     ))}
-                    <input type="text" value={commentText[post._id] || ""} onChange={(e) => setCommentText({ ...commentText, [post._id]: e.target.value })} className="w-full mt-2 p-2 border rounded" />
-                    <button onClick={() => handleCommentSubmit(post._id)} className="bg-green-500 text-white px-3 py-1 rounded mt-2">
-                      Add Comment
-                    </button>
+
+                    {/* Add Comment Input */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="Write a comment..."
+                        value={commentText[post._id] || ""}
+                        onChange={(e) =>
+                          setCommentText((prev) => ({
+                            ...prev,
+                            [post._id]: e.target.value,
+                          }))
+                        }
+                        className="flex-grow p-2 border rounded"
+                      />
+                      <button
+                        onClick={() => handleCommentSubmit(post._id)}
+                        className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded"
+                      >
+                        Post
+                      </button>
+                    </div>
                   </div>
                 )}
-              </div>
+              </article>
             ))
           )}
-        </div>
-      </div>
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-yellow-400 p-4 shadow-md">
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={() => {
-                setShowLogoutConfirm(true);
-                setMobileMenuOpen(false);
-              }}
-              className="w-full px-4 py-2 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
-            >
-              <FaSignOutAlt className="text-xl" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      )}
+        </section>
 
-      {/* Confirmation Dialog */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-11/12 sm:w-auto">
-            <h3 className="text-xl font-bold mb-4">Confirm Logout</h3>
-            <p className="mb-6">Are you sure you want to logout?</p>
-            <div className="flex justify-end gap-3">
+        {/* Mobile Logout Menu */}
+        <div className="fixed bottom-4 right-4 z-50">
+          <button
+            className="bg-yellow-400 p-3 rounded-full shadow-md"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <FaSignOutAlt size={24} />
+          </button>
+
+          {mobileMenuOpen && (
+            <div className="absolute bottom-14 right-0 bg-white shadow-lg rounded p-3 space-y-2 w-44">
               <button
-                onClick={() => setShowLogoutConfirm(false)}
-                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                className="text-red-600 font-semibold w-full hover:bg-red-50 py-2 rounded"
+                onClick={() => setShowLogoutConfirm(true)}
+              >
+                Logout
+              </button>
+              <button
+                className="w-full hover:bg-gray-100 py-2 rounded"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Cancel
               </button>
-              <button
-                onClick={() => navigate("/")}
-                className="px-4 py-2 bg-[#ffc13b] rounded hover:bg-[#e6ac35] transition-colors"
-              >
-                Yes, Logout
-              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Logout Confirmation */}
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg p-6 shadow-lg w-80">
+              <p className="text-center mb-4 font-semibold">Confirm Logout?</p>
+              <div className="flex justify-around">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="px-4 py-2 rounded border hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Yes, Logout
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </main>
     </div>
   );
 };

@@ -77,7 +77,7 @@ export const toggleLikePost = async (req, res) => {
   }
 };
 
-// Add Comment
+// Add Comment (updated to populate user info)
 export const addComment = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -97,8 +97,13 @@ export const addComment = async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
-    io.emit("commentAdded", { postId, comments: post.comments });
-    res.json({ message: "Comment added", comments: post.comments });
+    // Fetch updated post with populated comment users
+    const updatedPost = await Post.findById(postId)
+      .populate("comments.user", "name")
+      .populate("createdBy", "name");
+
+    io.emit("commentAdded", { postId, comments: updatedPost.comments });
+    res.json({ message: "Comment added", comments: updatedPost.comments });
   } catch (error) {
     console.error("Add comment error:", error);
     res.status(500).json({ error: "Failed to add comment", details: error.message });
