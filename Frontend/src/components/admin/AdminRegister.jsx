@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Header from "../common/Header";
-import Footer from "../common/Footer";
+import InFooter from "../common/InFooter";
 
 const API_BASE_URL = "http://localhost:8000";
 
@@ -79,16 +79,16 @@ const AdminRegister = () => {
     }
   };
   return (
-    <div className="">
-      <Header/>
-      <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+    <div className="h-auto">
+      <Header />
+      <Container component="main" maxWidth="md" sx={{ my: 12,  }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
           {!registered ? (
             <>
-              <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
+              <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#08415C' }}>
                 Admin Registration
               </Typography>
-              <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
+              <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4, color: '#08415C' }}>
                 Please fill in your details to create an account
               </Typography>
 
@@ -96,7 +96,7 @@ const AdminRegister = () => {
                 <Grid container spacing={3}>
                   {/* Personal Information Section */}
                   <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
+                    <Typography variant="h6" gutterBottom sx={{ color: '#08415C' }}>
                       Personal Information
                     </Typography>
                     <Divider sx={{ mb: 2 }} />
@@ -151,7 +151,7 @@ const AdminRegister = () => {
 
                   {/* Admin Information Section */}
                   <Grid item xs={12} sx={{ mt: 1 }}>
-                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
+                    <Typography variant="h6" gutterBottom sx={{ color: '#08415C' }}>
                       Admin Information
                     </Typography>
                     <Divider sx={{ mb: 2 }} />
@@ -187,7 +187,7 @@ const AdminRegister = () => {
                   fullWidth
                   variant="contained"
                   size="large"
-                  sx={{ mt: 4, py: 1.5 }}
+                  sx={{ mt: 4, py: 1.5, backgroundColor: '#08415C' }}
                 >
                   Register
                 </Button>
@@ -195,11 +195,11 @@ const AdminRegister = () => {
             </>
           ) : (
             <Box sx={{ textAlign: 'center', p: 4 }}>
-              <CheckCircleIcon color="success" sx={{ fontSize: 60, mb: 2 }} />
+              <CheckCircleIcon color="success" sx={{ fontSize: 60, mb: 2, color: '#08415C' }} />
               <Typography variant="h5" gutterBottom>
                 Registration Successful!
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3, color: '#08415C' }}>
                 Your admin account has been created successfully.
               </Typography>
               <Button
@@ -208,7 +208,7 @@ const AdminRegister = () => {
                   sessionStorage.removeItem("registered");
                   navigate("/");
                 }}
-                sx={{ mt: 2, px: 4 }}
+                sx={{ mt: 2, px: 4, color: '#08415C' }}
               >
                 Back to Login
               </Button>
@@ -216,7 +216,7 @@ const AdminRegister = () => {
           )}
         </Paper>
       </Container>
-      <Footer/>
+      <InFooter />
     </div>
   );
 };

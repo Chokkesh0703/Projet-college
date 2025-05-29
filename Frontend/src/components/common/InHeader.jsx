@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa'
 import PersonIcon from '@mui/icons-material/Person';
+import { Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
+import { LogOut, User } from 'lucide-react'
 
 const InHeader = () => {
   const [profile, setProfile] = useState(null);
@@ -11,7 +13,11 @@ const InHeader = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -46,6 +52,14 @@ const InHeader = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-red-500 mb-4">{error}</p>
+      </div>
+    );
+  }
+
   if (!profile) {
     return (
       <div className="text-center py-10">
@@ -68,23 +82,13 @@ const InHeader = () => {
           <img className='h-16 md:h-20' src={Logo} alt="Logo" />
         </div>
 
-        {/* Mobile menu button */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-gray-800 focus:outline-none"
-          >
-            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
-        </div>
-
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-4 items-center">
           <button
             onClick={() => navigate("/ProfileView")}
             className="p-3 rounded-full bg-white hover:bg-gray-100 transition-colors whitespace-nowrap"
           >
-            <PersonIcon /> 
+            <PersonIcon />
             {profile.username}
           </button>
           <button
@@ -95,34 +99,54 @@ const InHeader = () => {
             <span className="hidden lg:inline">Logout</span>
           </button>
         </div>
+
+        {/* Mobile menu button */}
+        <div className="md:hidden">
+          <IconButton
+            edge="end"
+            color="default"
+            aria-label="menu"
+            onClick={toggleSidebar}
+          >
+            {isSidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </IconButton>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-yellow-400 p-4 shadow-md">
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={() => {
-                navigate("/ProfileView");
-                setMobileMenuOpen(false);
-              }}
-              className="w-full px-4 py-2 rounded-full bg-white hover:bg-gray-100 transition-colors text-left"
-            >
-              {profile.username}
-            </button>
-            <button
-              onClick={() => {
-                setShowLogoutConfirm(true);
-                setMobileMenuOpen(false);
-              }}
-              className="w-full px-4 py-2 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
-            >
-              <FaSignOutAlt className="text-xl" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Mobile Sidebar Drawer */}
+      <Drawer
+        anchor="right"
+        open={isSidebarOpen}
+        onClose={toggleSidebar}
+        sx={{ '& .MuiDrawer-paper': { width: 250 } }}
+      >
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              navigate("/ProfileView");
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <User />
+            </ListItemIcon>
+            <ListItemText primary={profile.username} />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              setShowLogoutConfirm(true);
+              toggleSidebar();
+            }}
+          >
+            <ListItemIcon>
+              <LogOut />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
+      </Drawer>
 
       {/* Confirmation Dialog */}
       {showLogoutConfirm && (
@@ -138,7 +162,11 @@ const InHeader = () => {
                 Cancel
               </button>
               <button
-                onClick={() => navigate("/")}
+                onClick={() => {
+                  sessionStorage.removeItem('userToken');
+                  sessionStorage.removeItem('token');
+                  navigate("/");
+                }}
                 className="px-4 py-2 bg-[#ffc13b] rounded hover:bg-[#e6ac35] transition-colors"
               >
                 Yes, Logout
@@ -152,4 +180,3 @@ const InHeader = () => {
 }
 
 export default InHeader;
-

@@ -211,13 +211,6 @@ const AdminPost = () => {
     }}>
       <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
         <h1 className="text-xl font-semibold text-white">Announcements</h1>
-        <button
-          onClick={() => setShowLogoutConfirm(true)}
-          className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
-        >
-          <FaSignOutAlt className="text-xl" />
-          <span className="hidden lg:inline">Logout</span>
-        </button>
       </div>
 
       <div className="container mx-auto mt-2 p-4 max-w-3xl">
@@ -232,7 +225,7 @@ const AdminPost = () => {
             required
           />
           <input type="file" accept="image/*, video/*" onChange={(e) => setFile(e.target.files[0])} className="my-2 block w-full" />
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
+          <button type="submit" className="bg-yellow-400 text-zinc-950 px-4 py-2 rounded w-full">
             Post
           </button>
         </form>

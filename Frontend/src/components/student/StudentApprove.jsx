@@ -60,13 +60,6 @@ const StudentApprove = () => {
     <div className="">
       <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
         <h1 className="text-xl font-semibold text-white">Request Approvel Panel</h1>
-        <button
-          onClick={() => setShowLogoutConfirm(true)}
-          className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
-        >
-          <FaSignOutAlt className="text-xl" />
-          <span className="hidden lg:inline">Logout</span>
-        </button>
       </div>
       <div className="p-6">
         <h1 className="font-bold text-3xl">Student Request</h1>

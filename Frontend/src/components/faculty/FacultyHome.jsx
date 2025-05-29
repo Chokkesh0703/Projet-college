@@ -215,13 +215,6 @@ const FacultyHome = () => {
         {/* <Header /> */}
         <div className="p-4 text-black text-lg flex justify-between items-center bg-[#08415C]">
           <h1 className="text-xl font-semibold text-white">Announcements</h1>
-          <button
-            onClick={() => setShowLogoutConfirm(true)}
-            className="p-3 rounded-full flex items-center gap-2 bg-white hover:bg-gray-100 transition-colors"
-          >
-            <FaSignOutAlt className="text-xl" />
-            <span className="hidden lg:inline">Logout</span>
-          </button>
         </div>
 
         <div className="container mx-auto mt-2 p-4 max-w-3xl">
@@ -311,7 +304,7 @@ const FacultyHome = () => {
             onClick={() => navigate("/Facultychatlist")}
           />
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
       {/* Mobile Menu */}
       {mobileMenuOpen && (

@@ -64,7 +64,7 @@ const Chatroom = () => {
   };
 
   return (
-    <div className="flex flex-col h-[78vh]" style={{ backgroundColor: "#f5f0e1" }}>
+    <div className="flex flex-col h-[88vh]" style={{ backgroundColor: "#f5f0e1" }}>
       {/* Header */}
       <div className="p-4 text-black text-lg flex justify-between items-center" style={{ backgroundColor: '#08415C' }}>
         <h1 className="text-xl font-semibold text-white">Chatroom: {course}, {yearofpass}</h1>

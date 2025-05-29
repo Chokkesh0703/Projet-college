@@ -83,16 +83,16 @@ const Register = () => {
     }
   };
   return (
-    <div className="h-screen relative">
+    <div className="h-screen">
       <Header />
-      <Container component="main" maxWidth="md" sx={{ py: 4, height:'100%',margin:'' }}>
+      <Container component="main" maxWidth="md" sx={{ py: 4, height:'auto', }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
           {!registered ? (
             <>
-              <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold' }}>
+              <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold',color:'#08415C' }}>
                 Student Registration
               </Typography>
-              <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
+              <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4, color:'#08415C' }}>
                 Please fill in your details to create an account
               </Typography>
 
@@ -100,7 +100,7 @@ const Register = () => {
                 <Grid container spacing={3}>
                   {/* Personal Information Section */}
                   <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
+                    <Typography variant="h6" gutterBottom sx={{ color: '#08415C' }}>
                       Personal Information
                     </Typography>
                     <Divider sx={{ mb: 2 }} />
@@ -155,7 +155,7 @@ const Register = () => {
 
                   {/* Academic Information Section */}
                   <Grid item xs={12} sx={{ mt: 1 }}>
-                    <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
+                    <Typography variant="h6" gutterBottom sx={{ color: '#08415C' }}>
                       Academic Information
                     </Typography>
                     <Divider sx={{ mb: 2 }} />
@@ -222,7 +222,7 @@ const Register = () => {
                   fullWidth
                   variant="contained"
                   size="large"
-                  sx={{ mt: 4, py: 1.5 }}
+                  sx={{ mt: 4, py: 1.5,backgroundColor:'#08415C' }}
                 >
                   Register
                 </Button>

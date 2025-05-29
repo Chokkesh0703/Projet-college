@@ -8,7 +8,7 @@ import { useMediaQuery } from '@mui/material';
 import InstructionAdmin from "../instructions/InstructionAdmin"
 import InstructionFaculty from "../instructions/InstructionFaculty"
 import InstructionStudents from "../instructions/InstructionStudents"
-import Footer from './Footer';
+import InFooter from './InFooter';
 import Header from './Header';
 
 
@@ -51,7 +51,7 @@ export default function BasicTabs() {
     };
 
     return (
-        <div className="h-[100vh]">
+        <div className="h-auto">
             <Header />
             <Box sx={{ width: '100%' }}>
                 <Box sx={{
@@ -99,7 +99,7 @@ export default function BasicTabs() {
                     <InstructionAdmin />
                 </CustomTabPanel>
             </Box>
-            <Footer/>
+            <InFooter/>
         </div>
     );
 }

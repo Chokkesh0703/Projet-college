@@ -151,7 +151,7 @@ const StudentHome = () => {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="h-[100vh] w-full relative">
       <img src={bgForChat} alt="Banner" className="absolute bg-repeat w-full" />
       <div className="relative max-h-svh">
         <div className="container mx-auto p-4 max-w-3xl">
