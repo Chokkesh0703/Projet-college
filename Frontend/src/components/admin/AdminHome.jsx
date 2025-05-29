@@ -83,7 +83,7 @@ const AdminHome = () => {
 
   return (
     <div className="bg-cover bg-no-repeat">
-      <InHeader />
+      {/* <InHeader /> */}
       <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', minHeight: 'calc(100vh - 128px)' }}>
         {/* Sidebar for desktop */}
         {!isMobile && (
